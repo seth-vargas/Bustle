@@ -157,10 +157,6 @@ def logout():
 @app.route("/products")
 def show_all_products():
 
-    if not g.user:
-        flash("Please login to view page", "danger")
-        return redirect("/")
-
     products = Product.query.all()
 
     return render_template("products/list-products.html", products=products)
@@ -185,10 +181,6 @@ def show_product(id):
 @app.route("/products/<category>")
 def show_products_by_category(category):
     """ Shows list of products by category """
-
-    if not g.user:
-        flash("Please login to view page", "danger")
-        return redirect("/")
     
     products = Product.query.filter(Product.category==category).all()
     
@@ -204,7 +196,7 @@ def show_account():
         user = User.query.get(g.user.id)
         return render_template("account.html", user=user)
     else:
-        return redirect("/")
+        return redirect("/login")
 
 # TODO : Cart
 @app.route("/cart", methods=["GET", "POST"])
@@ -216,7 +208,7 @@ def cart():
 
     if not g.user:
         flash("Invalid credentials", "danger")
-        return redirect("/")
+        return redirect("/login")
 
     else:
         

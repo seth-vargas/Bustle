@@ -22,6 +22,21 @@
             </form>
             <ul class="nav navbar-nav navbar-right">
                 {% if g.user %}
+
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      Hi, {{ g.user.first_name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                      <li><a class="dropdown-item active" href="/my-account">See my account</a></li>
+                      <li><a class="dropdown-item" href="/cart">See my cart</a></li>
+                      <li><a class="dropdown-item" href="/favorites">See my favorites</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="/logout">Log out</a></li>
+                    </ul>
+                  </div>
+<!-- 
+
                 <li class="mx-3">
                     <a href="/my-account" class="link-light link-underline link-underline-opacity-0">
                         <small class="mx-1">Hello, {{ g.user.first_name }}!</small>
@@ -39,7 +54,7 @@
                 </li>
                 <li class="mx-1">
                     <a href="/signup" class="btn btn-success">Sign up</a>
-                </li>
+                </li> -->
                 {% endif %}
             </ul>
         </div>
