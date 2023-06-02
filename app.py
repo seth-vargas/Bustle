@@ -157,6 +157,10 @@ def logout():
 @app.route("/products")
 def show_all_products():
 
+    if not g.user:
+        flash("Please login to view page", "danger")
+        return redirect("/")
+
     products = Product.query.all()
 
     return render_template("products/list-products.html", products=products)
