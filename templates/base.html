@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://kit.fontawesome.com/9086fa8e81.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css
+    ">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-5" href="/">Bustle</a>
+            <form class="d-flex w-25">
+                <input class="form-control me-2 rounded-pill" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                {% if g.user %}
+                <li class="mx-3">
+                    <a href="/my-account" class="link-light link-underline link-underline-opacity-0">
+                        <small class="mx-1">Hello, {{ g.user.first_name }}!</small>
+                        <i class="fa-regular fa-user" style="color: #ffffff;"></i>
+                    </a>
+                </li>
+                <li class="mx-3">
+                    <a href="/cart">
+                        <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="mx-3">
+                    <a href="/login" class="btn btn-outline-light">Log in</a>
+                </li>
+                <li class="mx-3">
+                    <a href="/signup" class="btn btn-secondary">Sign up</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+    </nav>
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }} mx-auto w-25 rounded-pill text-center"><small><b>{{ message }}</b></small>
+    </div>
+    {% endfor %}
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.get_full_name() }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <h1>My Account</h1>
+    <a href="/logout" class="btn btn-danger">
+        <small class="mx-1">Sign out</small>
+        <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
+    </a>
+</div>
+
+<div class="row">
+    <div class="accordion accordion-flush" id="accountInfo">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    <h3>Account Info</h3>
+                </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                data-bs-parent="#accountInfo">
+                <div class="accordion-body">
+                    <h5 class="card-title">Account Details</h5>
+                    <p class="card-text">{{ user.get_full_name() }}</p>
+                    <p class="card-text">{{ user.email }}</p>
+                    <p class="card-text">
+                        <a href="/change-password">Change password</a> | <a href="/account/edit">Edit account</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    <h3>Favorites</h3>
+                </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+                data-bs-parent="#accountInfo">
+                <div class="accordion-body">
+                    <p class="card-text">Your favorites are saved items that you want to keep in mind!</p>
+                    <a href="/favorites">See your favorites</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %} {{ product.title }} {% endblock %}
+
+{% block content %}
+
+<div class="row mt-3">
+    <div class="row">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Products</a></li>
+                <li class="breadcrumb-item"><a href="/products/{{ product.category }}">{{ product.category }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h1 class="">{{ product.title }}</h1>
+        <h3>{{ product.category }}</h3>
+    </div>
+    <div class="row">
+        <div class="col">
+            <img src="{{ product.image }}" class="w-100">
+        </div>
+        <div class="col-8">
+            <div class="row mx-5">
+                <div class="row">
+                    <h2>${{ "%.2f" | format(product.price) }}</h2>
+                    <h2>{{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i> | {{
+                        product.rate_count }} ratings</h2>
+                    <div class="row">
+                        <h4>Product Description:</h4>
+                        <p>{{ product.description }}</p>
+                        <div class="row">
+                            <form action="/cart" method="post" class="d-grid mx-5 my-2">
+                                <button class="btn btn-outline-dark">Add to cart</button>
+                            </form>
+                            <form action="/favorites" method="post" class="d-grid mx-5 my-2">
+                                <button class="btn btn-outline-secondary">Add to favorites</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="row">
+            <div class="col">
+                <h2>Similar items</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex overflow-x-auto">
+                {% for product in similar_products %}
+                <div class="col-4">
+                    <div class="card mx-5 w-75 mx-auto">
+                        <div class="card-body">
+
+                            <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
+                            <p class="card-text">{{ product.title }}</p>
+                            <a href="/products/{{ product.id }}" class="stretched-link"></a>
+                            <h5 class="card-title">
+                                <div class="d-flex justify-content-between">
+                                    ${{ "%.2f" | format(product.price) }}
+                                    <span>
+                                        {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
+                                    </span>
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                    <form action="/cart" class="d-grid mx-4 my-2" method="post">
+                        <button class="btn btn-outline-dark">Add to cart</button>
+                    </form>
+                    <form action="/favorites" class="d-grid mx-4 my-2" method="post">
+                        <button class="btn btn-outline-secondary">Add to favorites</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

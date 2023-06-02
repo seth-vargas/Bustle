@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="row">
+{% if category %}
+
+<div class="row">
+    <div class="col">
+        <h1 class="text-center">{{ category }}</h1>
+    </div>
+</div>
+
+{% else %}
+
+<div class="row">
+    <div class="col">
+        <h1 class="text-center">All Products</h1>
+    </div>
+</div>
+
+{% endif %}
+</div>
+
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for product in products %}
+
+    <div class="col-sm-3">
+
+        <div class="card my-3">
+            <div class="card-body">
+
+                <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
+
+                <p class="card-text">{{ product.title }}</p>
+
+                <a href="/products/{{ product.id }}" class="stretched-link"></a>
+
+                <h5 class="card-title">
+                    <div class="d-flex justify-content-between">
+                        ${{ "%.2f" | format(product.price) }}
+                        <span>
+                            {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
+                        </span>
+                    </div>
+                </h5>
+
+            </div>
+        </div>
+
+        <form action="/cart" class="d-grid mx-4 my-2" method="post">
+            <button class="btn btn-outline-dark">Add to cart</button>
+        </form>
+
+        <form action="/favorites" class="d-grid mx-4 my-2" method="post">
+            <button class="btn btn-outline-secondary">Add to favorites</button>
+        </form>
+
+    </div>
+
+    {%endfor%}
+</div>
+{% endblock %}
