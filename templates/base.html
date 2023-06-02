@@ -13,48 +13,38 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
         <div class="container-fluid">
-            <a class="navbar-brand mx-5" href="/">Bustle</a>
+            <a class="navbar-brand ms-5" href="/">Bustle</a>
             <form class="d-flex w-25">
                 <input class="form-control me-2 rounded-pill" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <ul class="nav navbar-nav navbar-right">
-                {% if g.user %}
+            {% if g.user %}
+            <div class="dropstart me-5">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Hi, {{ g.user.first_name }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                    <li><a class="dropdown-item active" href="/my-account">See my account</a></li>
+                    <li><a class="dropdown-item" href="/cart">See my cart</a></li>
+                    <li><a class="dropdown-item" href="/favorites">See my favorites</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/logout">Log out</a></li>
+                </ul>
+            </div>
 
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                      Hi, {{ g.user.first_name }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                      <li><a class="dropdown-item active" href="/my-account">See my account</a></li>
-                      <li><a class="dropdown-item" href="/cart">See my cart</a></li>
-                      <li><a class="dropdown-item" href="/favorites">See my favorites</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="/logout">Log out</a></li>
-                    </ul>
-                  </div>
-<!-- 
-
-                <li class="mx-3">
-                    <a href="/my-account" class="link-light link-underline link-underline-opacity-0">
-                        <small class="mx-1">Hello, {{ g.user.first_name }}!</small>
-                        <i class="fa-regular fa-user" style="color: #ffffff;"></i>
-                    </a>
-                </li>
-                <li class="mx-3">
-                    <a href="/cart">
-                        <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
-                    </a>
-                </li>
             {% else %}
+            <ul class="nav navbar-nav navbar-right">
                 <li class="mx-1">
                     <a href="/login" class="btn btn-outline-light">Log in</a>
                 </li>
                 <li class="mx-1">
                     <a href="/signup" class="btn btn-success">Sign up</a>
-                </li> -->
+                </li>
                 {% endif %}
             </ul>
         </div>
