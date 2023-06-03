@@ -5,11 +5,7 @@
 {% block content %}
 
 <div class="row">
-    <h1>My Account</h1>
-    <a href="/logout" class="btn btn-danger">
-        <small class="mx-1">Sign out</small>
-        <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
-    </a>
+        <h1>My Account</h1>
 </div>
 
 <div class="row">
@@ -28,7 +24,7 @@
                     <p class="card-text">{{ user.get_full_name() }}</p>
                     <p class="card-text">{{ user.email }}</p>
                     <p class="card-text">
-                        <a href="/change-password">Change password</a> | <a href="/account/edit">Edit account</a>
+                        <a href="/my-account/change-password">Change password</a> | <a href="/my-account/edit">Edit account</a>
                     </p>
                 </div>
             </div>

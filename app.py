@@ -1,4 +1,4 @@
-""" 
+"""
 Capstone project!
 
 # TODO: Project proposal revision
@@ -6,7 +6,7 @@ Capstone project!
 """
 import requests
 from secrets import secret_password
-from forms import AddUserForm, LoginForm
+from forms import AddUserForm, LoginForm, EditUserForm
 from models import db, connect_db, Product, User
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, redirect, flash, session, g, request
@@ -90,9 +90,9 @@ def show_signup():
     if form.validate_on_submit():
         try:
             user = User.signup(
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                email=form.email.data,
+                first_name=form.first_name.data.title(),
+                last_name=form.last_name.data.title(),
+                email=form.email.data.lower(),
                 password=form.password.data,
             )
 
@@ -142,10 +142,10 @@ def show_login():
 
 @app.route("/logout")
 def logout():
-    
+
     if not g.user:
         return redirect("/")
-    
+
     do_logout()
     user = User.query.get(g.user.id)
     flash(f"Goodbye {user.first_name}!", "warning")
@@ -181,9 +181,9 @@ def show_product(id):
 @app.route("/products/<category>")
 def show_products_by_category(category):
     """ Shows list of products by category """
-    
-    products = Product.query.filter(Product.category==category).all()
-    
+
+    products = Product.query.filter(Product.category == category).all()
+
     return render_template("products/list-products.html", products=products, category=category)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -197,6 +197,44 @@ def show_account():
         return render_template("account.html", user=user)
     else:
         return redirect("/login")
+
+
+@app.route("/my-account/edit", methods=["GET", "POST"])
+def edit_account():
+    """Update profile for current user."""
+
+    if not g.user:
+        flash("Please log in to make changes to your account.", "danger")
+        return redirect("/login")
+
+    form = EditUserForm()
+    user = User.query.get_or_404(g.user.id)
+
+    if form.validate_on_submit():
+        if user.authenticate(user.email, form.password.data):
+            # User is authenticated, update info
+            user.first_name = form.first_name.data.title() or user.first_name
+            user.last_name=form.last_name.data.title() or user.last_name
+            user.email=form.email.data.lower() or user.email
+                        
+        else:
+            # User is not authenticated, kick them back to the form
+            flash("Entered incorrect password", "danger")
+            return render_template("/forms/edit-user.html", form=form)
+        try:
+            db.session.add(user)
+            db.session.commit()
+                
+        except IntegrityError:
+            db.session.rollback()
+            flash("The e-mail address you entered is already in use, please try another.", "danger")
+            return render_template("forms/edit-user.html", form=form)
+        
+        flash("Your account has been updated.", "success")
+        return redirect(f"/my-account")
+    
+    return render_template("/forms/edit-user.html", form=form)
+        
 
 # TODO : Cart
 @app.route("/cart", methods=["GET", "POST"])
