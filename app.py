@@ -236,7 +236,6 @@ def edit_account():
     return render_template("/forms/edit-user.html", form=form)
         
 
-# TODO : Cart
 @app.route("/cart", methods=["GET", "POST"])
 def cart():
     """ 
@@ -245,7 +244,7 @@ def cart():
     """
 
     if not g.user:
-        flash("Invalid credentials", "danger")
+        flash("Please log in to interact with your shopping cart", "danger")
         return redirect("/login")
 
     else:
@@ -258,12 +257,8 @@ def cart():
             user.cart.append(product)
             db.session.commit()
             
-            # breakpoint()
-            
             data = {
-                "product_name": product.title,
-                "product_price": product.price,
-                # "users_cart": user.cart
+                "message": f"Added {product.title} to cart."
             }
             
             return jsonify({"response": data})
@@ -271,8 +266,26 @@ def cart():
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
         
-# TODO : add to cart
-# TODO : remove from cart
+
+@app.route("/cart/delete", methods=["DELETE"])
+def remove_from_cart():
+    if not g.user:
+        flash("Please log in to interact with your shopping cart", "danger")
+        return redirect("/login")
+    
+    user = User.query.get_or_404(g.user.id)
+    
+    prod_id = int(request.get_json()["id"])
+    product = Product.query.get_or_404(prod_id)
+    
+    user.cart.remove(product)
+    db.session.commit()
+    
+    data = {
+        "message": f"Removed {product.title} from cart."
+    }
+    
+    return jsonify({"response": data})
 # TODO : add to favorites
 # TODO : remove from favorites
 
