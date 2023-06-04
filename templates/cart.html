@@ -6,6 +6,37 @@
 
 {% block content %}
 <div class="row">
-    <h1></h1>
+    <h1>Your Cart</h1>
+</div>
+<div class="row">
+    <ul>
+
+        {% for product in cart %}
+
+        <div class="row m-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <span style="cursor: pointer;">
+                        <i class="fa-solid fa-xmark me-4 remove-from-cart" data-id="{{ product.id }}"></i>
+                    </span>
+                    <img src="{{product.image}}" style="height:100px;">
+                    <small class="mx-5">{{product.title}}</small>
+                </div>
+
+                <b>${{product.price}}</b>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </ul>
+    <div class="row">
+        <h2>Subtotal: <b>{{ total }}</b></h2>
+    </div>
+
 </div>
 {% endblock %}

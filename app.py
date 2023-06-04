@@ -9,7 +9,7 @@ from secrets import secret_password
 from forms import AddUserForm, LoginForm, EditUserForm
 from models import db, connect_db, Product, User
 from sqlalchemy.exc import IntegrityError
-from flask import Flask, render_template, redirect, flash, session, g, request
+from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
 
 
 CURR_USER_KEY = "curr_user"
@@ -249,14 +249,28 @@ def cart():
         return redirect("/login")
 
     else:
-        
         user = User.query.get(g.user.id)
         
         if request.method == "POST":
+            prod_id = int(request.get_json()["id"])
+            product = Product.query.get_or_404(prod_id)
             
-            return redirect("/products")
+            user.cart.append(product)
+            db.session.commit()
+            
+            # breakpoint()
+            
+            data = {
+                "product_name": product.title,
+                "product_price": product.price,
+                # "users_cart": user.cart
+            }
+            
+            return jsonify({"response": data})
         else:
-            return render_template("cart.html", user=user)
+            cart = user.cart
+            return render_template("cart.html", user=user, cart=cart)
+        
 # TODO : add to cart
 # TODO : remove from cart
 # TODO : add to favorites

@@ -12,7 +12,19 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+cart_association = db.Table(
+    "cart",
+    db.Column("user_id", db.ForeignKey("users.id")),
+    db.Column("product_id", db.ForeignKey("products.id"))
+)
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
 class User(db.Model):
@@ -45,6 +57,9 @@ class User(db.Model):
         db.Text,
         nullable=False
     )
+
+    cart = db.relationship(
+        "Product", secondary=cart_association, backref="users")
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -82,9 +97,10 @@ class User(db.Model):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
-    
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
 class Product(db.Model):
@@ -103,7 +119,7 @@ class Product(db.Model):
         nullable=False,
         unique=True
     )
-    
+
     price = db.Column(
         db.Float,
         nullable=False
@@ -138,25 +154,5 @@ class Product(db.Model):
         default=0
     )
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-class Cart(db.Model):
-    """ Connection: User to Products """
-
-    __tablename__ = "carts"
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey("users.id", ondelete="cascade"),
-    )
-
-    product_name = db.Column(
-        db.Integer,
-        db.ForeignKey("products.id"),
-    )
+    cart = db.relationship(
+        "User", secondary=cart_association, backref="products")

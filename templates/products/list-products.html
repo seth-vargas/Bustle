@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Products{% endblock %}
+{% block title %}{% if category %} {{ category | title()}} {% else %} Products {% endif %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <form action="/cart" class="d-grid mx-4 my-2" method="post">
+        <form action="/cart" class="d-grid mx-4 my-2 add-to-cart" data-id="{{ product.id }}" method="post">
             <button class="btn btn-outline-dark">Add to cart</button>
         </form>
 

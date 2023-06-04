@@ -1,5 +1,5 @@
 from app import db
-from models import User, Product
+from models import User, Product, cart_association
 import requests
 
 
