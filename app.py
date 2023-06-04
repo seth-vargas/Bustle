@@ -258,7 +258,8 @@ def cart():
             db.session.commit()
             
             data = {
-                "message": f"Added {product.title} to cart."
+                "message": f"Added {product.title} to cart.",
+                "method": f"{request.method}"
             }
             
             return jsonify({"response": data})
@@ -282,7 +283,8 @@ def remove_from_cart():
     db.session.commit()
     
     data = {
-        "message": f"Removed {product.title} from cart."
+        "message": f"Removed {product.title} from cart.",
+        "method": f"{request.method}"
     }
     
     return jsonify({"response": data})

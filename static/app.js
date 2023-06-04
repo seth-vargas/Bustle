@@ -1,6 +1,14 @@
 $( ".add-to-cart" ).on( "submit" , addToCart )
 $( ".remove-from-cart" ).on( "click", removeFromCart )
 
+function updateHtml(method, element) {
+    if (method === "POST") {
+        element.innerHTML = `<button class="btn btn-success disabled">Added to cart!</button>`
+    } else {
+        element.remove()
+    }
+}
+
 async function postData(url = "", data = {}) {
     const response = await fetch(url, {
         method: "POST",
@@ -25,21 +33,25 @@ async function deleteData(url="", data={}) {
 
 async function addToCart(e) {
     e.preventDefault()
-    console.log(`Clicked ${this.dataset.id}!`)
     const productId = this.dataset.id
 
     const response = await postData(`/cart`, {id: productId})
 
-    console.log(response)
+    const method = response["response"]["method"]
+    const element = this
+
+    updateHtml(method, element)
 }
 
 async function removeFromCart(e) {
-    console.log(`Clicked ${this.dataset.id}`)
     const productId = this.dataset.id
     
     const response = await deleteData("/cart/delete", {id: productId})
 
-    console.log(response)
+    const method = response["response"]["method"]
+    const element = this.closest(".row")
+
+    updateHtml(method, element)
 }
 
 // TODO : Handle adding to favorites
