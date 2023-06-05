@@ -288,7 +288,64 @@ def remove_from_cart():
     }
     
     return jsonify({"response": data})
-# TODO : add to favorites
-# TODO : remove from favorites
+
+@app.route("/favorites", methods=["GET", "POST"])
+def show_favorites():
+    """ shows user their favorites if logged in """
+    
+    if not g.user:
+        flash("Please log in to view your favorites list", "danger")
+        return redirect("/login")
+        
+    user = User.query.get_or_404(g.user.id)
+
+    if request.method == "POST":
+        prod_id = int(request.get_json()["id"])
+        product = Product.query.get_or_404(prod_id)
+        
+        user.favorites.append(product)
+        db.session.commit()
+        
+        data = {
+            "message": f"Added {product.title} to favorites.",
+            "method": f"{request.method}"
+        }
+        
+        return jsonify({"response": data})
+        
+    elif request.method == "GET":
+        favorites = user.favorites
+        return render_template("favorites.html", favorites=favorites)
+    
+    else:
+        return render_template("invalid-method.html")
+    
+
+@app.route("/favorites/delete", methods=["DELETE"])
+def delete_favorite():
+    """ deletes a favorite from user.favorites in the db """
+    
+    if not g.user:
+        flash("Please log in to interact with your favorites")
+        return redirect("/login")
+    
+    if request.method != "DELETE":
+        return render_template("invalid-method.html")
+    
+    user = User.query.get_or_404(g.user.id)
+    
+    prod_id = int(request.get_json()["id"])
+    product = Product.query.get_or_404(prod_id)
+    
+    user.favorites.remove(product)
+    db.session.commit()
+    
+    data = {
+        "message": f"Removed {product.title} from favorites.",
+        "method": f"{request.method}"
+    }
+    
+    return jsonify({"data": data})
+    
 
 # TODO : Checkout

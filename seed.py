@@ -1,5 +1,5 @@
 from app import db
-from models import User, Product, cart_association
+from models import User, Product, cart_association, favorites_association
 import requests
 
 
@@ -20,6 +20,9 @@ for r in request.json():
         rating=r["rating"]["rate"],
         rate_count=r["rating"]["count"]
     ))
+    
+user = User.signup("seth", "vargas", "sv@gmail.com", "Password")
 
 db.session.add_all(products)
+db.session.add(user)
 db.session.commit()
