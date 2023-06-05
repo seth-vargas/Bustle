@@ -22,6 +22,16 @@ cart_association = db.Table(
     db.Column("product_id", db.ForeignKey("products.id"))
 )
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+favorites_association = db.Table(
+    "favorites",
+    db.Column("user_id", db.ForeignKey("users.id")),
+    db.Column("product_id", db.ForeignKey("products.id"))
+)
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -60,6 +70,9 @@ class User(db.Model):
 
     cart = db.relationship(
         "Product", secondary=cart_association, backref="users")
+    
+    favorites = db.relationship(
+        "Product", secondary=favorites_association)
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -156,3 +169,4 @@ class Product(db.Model):
 
     cart = db.relationship(
         "User", secondary=cart_association, backref="products")
+    
