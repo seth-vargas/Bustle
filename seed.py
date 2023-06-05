@@ -11,13 +11,16 @@ db.create_all()
 
 # Code to insert tables here
 request = requests.get("https://fakestoreapi.com/products")
-products = []
     
 for product in request.json():
     prod = stripe.Product.create(
         name=product["title"],
         description=product["description"],
         images=[product["image"]],
+        metadata={
+            "rating": product["rating"]["rate"],
+            "rate_count": product["rating"]["count"]
+        }
     )
     
     price = stripe.Price.create(
@@ -26,19 +29,13 @@ for product in request.json():
         unit_amount=int(float(product["price"])*100)
     )
     
-    prod.default_price = ( stripe.Price.retrieve(price.id).unit_amount ) / 100
-    
-    # products.append(ProductModel(
-    #     id=prod.id,
-    #     price=prod.default_price,
-    #     category=product["category"],
-    #     rating=product["rating"]["rate"],
-    #     rate_count=product["rating"]["count"]
-    # ))
+    stripe.Product.modify(
+        prod.id,
+        default_price=price.id
+    )
     
     
 user = User.signup("seth", "vargas", "sv@gmail.com", "Password")
 
-db.session.add_all(products)
 db.session.add(user)
 db.session.commit()

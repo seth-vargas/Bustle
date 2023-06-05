@@ -25,14 +25,14 @@
 
 
 <div class="row row-cols-1 row-cols-md-4 g-4">
-    {% for price in prices %}
+    {% for product in products %}
 
     <div class="col-sm-3">
 
         <div class="card my-3">
             <div class="card-body">
 
-                <img src="{{ .images[0] }}" class="card-img-top" style="width:100%; height:auto">
+                <img src="{{ product.images[0] }}" class="card-img-top" style="width:100%; height:auto">
 
                 <p class="card-text">{{ product.name }}</p>
 
@@ -42,7 +42,7 @@
                     <div class="d-flex justify-content-between">
                         ${{ hello }}
                         <span>
-                            {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
+                            {{ product.default_price.unit_amount }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
                         </span>
                     </div>
                 </h5>
