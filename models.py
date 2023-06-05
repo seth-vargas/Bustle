@@ -69,10 +69,10 @@ class User(db.Model):
     )
 
     cart = db.relationship(
-        "Product", secondary=cart_association, backref="users")
+        "ProductModel", secondary=cart_association, backref="users")
     
     favorites = db.relationship(
-        "Product", secondary=favorites_association)
+        "ProductModel", secondary=favorites_association)
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -116,43 +116,25 @@ class User(db.Model):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-class Product(db.Model):
+class ProductModel(db.Model):
     """ Product Model """
 
     __tablename__ = "products"
 
     id = db.Column(
-        db.Integer,
+        db.Text,
         primary_key=True,
-        autoincrement=True
     )
-
-    title = db.Column(
-        db.Text,
-        nullable=False,
-        unique=True
-    )
-
+    
     price = db.Column(
-        db.Float,
-        nullable=False
-    )
-
-    description = db.Column(
         db.Text,
         nullable=False,
-        default="No description available"
+        default=0
     )
 
     category = db.Column(
         db.Text,
         nullable=True
-    )
-
-    image = db.Column(
-        db.Text,
-        nullable=False,
-        default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHWfeNNjpktThzzwchFXF2hOMGjS44VyZT9HQdy0G-rQ&s"
     )
 
     rating = db.Column(

@@ -5,11 +5,12 @@ Capstone project!
 # TODO: Setup Heroku and deploy
 """
 import requests
-from secrets import secret_password
+from secrets import secret_password, stripe_key
 from forms import AddUserForm, LoginForm, EditUserForm
-from models import db, connect_db, Product, User
+from models import db, connect_db, ProductModel, User
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
+import stripe
 
 
 CURR_USER_KEY = "curr_user"
@@ -20,6 +21,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone1"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 app.config["SECRET_KEY"] = secret_password
+stripe.api_key = stripe_key
 
 connect_db(app)
 
@@ -157,23 +159,24 @@ def logout():
 @app.route("/products")
 def show_all_products():
 
-    products = Product.query.all()
+    products = stripe.Product.list(limit=20)
+    prices = stripe.Price.list(limit=20)
 
-    return render_template("products/list-products.html", products=products)
+    return render_template("products/list-products.html", products=products, prices=prices)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-@app.route("/products/<int:id>")
+@app.route("/products/<id>")
 def show_product(id):
     """ Shows a product """
-    product = Product.query.get(id)
+    product = stripe.Product.retrieve(f"{id}")
 
-    similar_products = Product.query.filter(
-        Product.category.ilike(f"%{product.category}%")).all()
+    # similar_products = Product.query.filter(
+    #     Product.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, similar_products=similar_products)
+    return render_template("products/product.html", product=product, )
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
