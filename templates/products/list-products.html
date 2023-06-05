@@ -58,10 +58,13 @@
             {% endif %}
         </form>
 
-        <form action="/favorites" class="d-grid mx-4 my-2" method="post">
-            <button class="btn btn-outline-secondary">Add to favorites</button>
+        <form action="/favorites" class="d-grid mx-4 my-2 add-to-favorites" data-id="{{ product.id }}" method="post">
+            {% if product in g.user.favorites %}
+            <button class="btn btn-outline-success disabled">Already in your favorites!</button>
+            {% else %}
+            <button class="btn btn-outline-dark">Add to favorites</button>
+            {% endif %}
         </form>
-
     </div>
 
     {%endfor%}

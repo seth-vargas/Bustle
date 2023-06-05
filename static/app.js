@@ -1,9 +1,19 @@
 $( ".add-to-cart" ).on( "submit" , addToCart )
 $( ".remove-from-cart" ).on( "click", removeFromCart )
+$( ".add-to-favorites" ).on( "submit" , addToFavorites )
+$( ".remove-from-favorites" ).on( "submit", removeFromFavorites )
 
-function updateHtml(method, element) {
+function updateHtmlOnCartUpdate(method, element) {
     if (method === "POST") {
         element.innerHTML = `<button class="btn btn-success disabled">Added to cart!</button>`
+    } else {
+        element.remove()
+    }
+}
+
+function updateHtmlOnFavoritestUpdate(method, element) {
+    if (method === "POST") {
+        element.innerHTML = `<button class="btn btn-outline-success disabled">Added to favorites!</button>`
     } else {
         element.remove()
     }
@@ -40,10 +50,10 @@ async function addToCart(e) {
     const method = response["response"]["method"]
     const element = this
 
-    updateHtml(method, element)
+    updateHtmlOnCartUpdate(method, element)
 }
 
-async function removeFromCart(e) {
+async function removeFromCart() {
     const productId = this.dataset.id
     
     const response = await deleteData("/cart/delete", {id: productId})
@@ -51,8 +61,34 @@ async function removeFromCart(e) {
     const method = response["response"]["method"]
     const element = this.closest(".row")
 
-    updateHtml(method, element)
+    updateHtmlOnCartUpdate(method, element)
 }
 
 // TODO : Handle adding to favorites
+async function addToFavorites(e) {
+    e.preventDefault()
+    console.log(this)
+    const productId = this.dataset.id
+
+    const response = await postData("/favorites", {id: productId})
+
+    const method = response["data"]["method"]
+    const element = this
+
+    updateHtmlOnFavoritestUpdate(method, element)
+}
+
 // TODO : Handle removing from favorites
+async function removeFromFavorites(e) {
+    e.preventDefault()
+    const productId = this.dataset.id
+    
+    const response = await deleteData("/favorites/delete", {id: productId})
+
+    const method = response["data"]["method"]
+    const element = this.closest(".col-sm-3")
+
+    updateHtmlOnFavoritestUpdate(method, element)
+}
+
+

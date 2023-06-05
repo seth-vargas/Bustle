@@ -311,7 +311,7 @@ def show_favorites():
             "method": f"{request.method}"
         }
         
-        return jsonify({"response": data})
+        return jsonify({"data": data})
         
     elif request.method == "GET":
         favorites = user.favorites
