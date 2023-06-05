@@ -126,6 +126,14 @@ class ProductModel(db.Model):
         primary_key=True,
     )
     
+    title = db.Column(
+        db.Text
+    )
+    
+    image = db.Column(
+        db.Text
+    )
+    
     price = db.Column(
         db.Text,
         nullable=False,

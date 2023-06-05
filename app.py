@@ -158,11 +158,10 @@ def logout():
 # General routes for app
 @app.route("/products")
 def show_all_products():
+    
+    products = ProductModel.query.all()
 
-    products = stripe.Product.list(limit=20)
-    prices = stripe.Price.list(limit=20)
-
-    return render_template("products/list-products.html", products=products, prices=prices)
+    return render_template("products/list-products.html", products=products)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
