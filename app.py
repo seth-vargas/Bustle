@@ -170,10 +170,10 @@ def show_all_products():
 @app.route("/products/<id>")
 def show_product(id):
     """ Shows a product """
-    product = stripe.Product.retrieve(f"{id}")
+    product = ProductModel.query.get(id)
 
-    # similar_products = Product.query.filter(
-    #     Product.category.ilike(f"%{product.category}%")).all()
+    similar_products = ProductModel.query.filter(
+        ProductModel.category.ilike(f"%{product.category}%")).all()
 
     return render_template("products/product.html", product=product, )
 

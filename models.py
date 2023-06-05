@@ -69,7 +69,7 @@ class User(db.Model):
     )
 
     cart = db.relationship(
-        "ProductModel", secondary=cart_association, backref="users")
+        "ProductModel", secondary=cart_association)
     
     favorites = db.relationship(
         "ProductModel", secondary=favorites_association)
@@ -135,7 +135,7 @@ class ProductModel(db.Model):
     )
     
     price = db.Column(
-        db.Text,
+        db.Integer,
         nullable=False,
         default=0
     )

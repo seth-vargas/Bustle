@@ -43,13 +43,13 @@ for prod in products.data:
     prod.update({"unit_amount": unit_amount})
     
     db.session.add(ProductModel(
-        id=prod.id,
-        title=prod.name,
-        image=prod.images[0],
-        price=prod.unit_amount,
-        category=prod.metadata.category,
-        rating=prod.metadata.rating,
-        rate_count=prod.metadata.rate_count
+        id=str(prod.id),
+        title=str(prod.name),
+        image=str(prod.images[0]),
+        price=int(prod.unit_amount / 100),
+        category=str(prod.metadata.category),
+        rating=float(prod.metadata.rating),
+        rate_count=int(prod.metadata.rate_count)
     ))
     
 
