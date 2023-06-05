@@ -47,7 +47,7 @@ async function addToCart(e) {
 
     const response = await postData(`/cart`, {id: productId})
 
-    const method = response["response"]["method"]
+    const method = response["data"]["method"]
     const element = this
 
     updateHtmlOnCartUpdate(method, element)
@@ -58,7 +58,7 @@ async function removeFromCart() {
     
     const response = await deleteData("/cart/delete", {id: productId})
 
-    const method = response["response"]["method"]
+    const method = response["data"]["method"]
     const element = this.closest(".row")
 
     updateHtmlOnCartUpdate(method, element)

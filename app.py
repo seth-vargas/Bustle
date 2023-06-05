@@ -262,7 +262,7 @@ def cart():
                 "method": f"{request.method}"
             }
             
-            return jsonify({"response": data})
+            return jsonify({"data": data})
         else:
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
@@ -287,7 +287,7 @@ def remove_from_cart():
         "method": f"{request.method}"
     }
     
-    return jsonify({"response": data})
+    return jsonify({"data": data})
 
 @app.route("/favorites", methods=["GET", "POST"])
 def show_favorites():
