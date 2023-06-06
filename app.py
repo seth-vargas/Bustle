@@ -337,8 +337,8 @@ def delete_favorite():
     
     user = User.query.get_or_404(g.user.id)
     
-    prod_id = int(request.get_json()["id"])
-    product = Product.query.get_or_404(prod_id)
+    prod_id = request.get_json()["id"]
+    product = ProductModel.query.get_or_404(prod_id)
     
     user.favorites.remove(product)
     db.session.commit()
