@@ -107,6 +107,16 @@ class User(db.Model):
                 return user
 
         return False
+    
+    @classmethod
+    def change_password(cls, email, password):
+        """ Hashes new password and updates user in system """
+        
+        user = cls.query.filter_by(email=email).first()
+        new_hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+        user.password = new_hashed_pwd
+        
+        return user
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"

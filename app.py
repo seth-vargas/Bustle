@@ -6,7 +6,7 @@ Capstone project!
 """
 import requests
 from secrets import secret_password, stripe_key
-from forms import AddUserForm, LoginForm, EditUserForm
+from forms import AddUserForm, LoginForm, EditUserForm, ChangePasswordForm
 from models import db, connect_db, ProductModel, User, deslugify
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
@@ -241,9 +241,40 @@ def edit_account():
     return render_template("/forms/edit-user.html", form=form)
 
 
-@app.route("/my-account/change-password")
-def user_forgot_password():
-    """ Logged in user can change their password here """
+@app.route("/my-account/change-password", methods=["GET", "POST"])
+def user_change_password():
+    """ Logged in user can change their password here """ 
+    if not g.user:
+        flash("Please log in.", "danger")
+        return redirect("/login")
+
+    form = ChangePasswordForm()
+    user = User.query.get_or_404(g.user.id)
+
+    if form.validate_on_submit():
+        if user.authenticate(user.email, form.old_password.data):
+            # User is authenticated, attempt to update info
+            password = form.new_password.data
+            repeat = form.repeat_new_password.data
+
+            if password != repeat:
+                flash("Passwords did not match", "danger")
+                return render_template("/forms/change-password.html", form=form)
+
+            user.change_password(user.email, password)
+
+            db.session.add(user)
+            db.session.commit()
+
+            flash("Your account has been updated.", "success")
+            return redirect(f"/my-account")
+
+        # User is not authenticated, kick them back to the form
+        flash("Entered incorrect password", "danger")
+        return render_template("/forms/change-password.html", form=form)
+
+    return render_template("/forms/change-password.html", form=form)
+
 
 @app.route("/cart", methods=["GET", "POST"])
 def cart():

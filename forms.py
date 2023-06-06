@@ -25,3 +25,11 @@ class EditUserForm(FlaskForm):
     last_name = StringField(validators=[Optional()])
     email = StringField(validators=[Optional(), Email()])
     password = PasswordField()
+    
+    
+class ChangePasswordForm(FlaskForm):
+    """ User can change password and keep it safe! """
+    
+    old_password = PasswordField()
+    new_password = PasswordField(validators=[Length(min=6)])
+    repeat_new_password = PasswordField(validators=[Length(min=6)])
