@@ -160,8 +160,9 @@ def logout():
 def show_all_products():
 
     products = ProductModel.query.all()
+    categories = ProductModel.get_categories()
 
-    return render_template("products/list-products.html", products=products)
+    return render_template("products/list-products.html", products=products, categories=categories)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -187,8 +188,9 @@ def show_products_by_category(category):
     category = deslugify(category)
     products = ProductModel.query.filter(
         ProductModel.category == category).all()
+    categories = ProductModel.get_categories()
 
-    return render_template("products/list-products.html", products=products, category=category)
+    return render_template("products/list-products.html", products=products, category=category, categories=categories)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

@@ -50,18 +50,29 @@
         </div>
         </div>
     </nav>
-    {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }} mx-auto w-25 rounded-pill text-center">
-        <small><b>{{ message }}</b></small>
-        <button type="button" class="btn-close my-auto" aria-label="Close"></button>
-    </div>
-    {% endfor %}
     <div class="container">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
+            <small><b>{{ message }}</b></small>
+            <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        <div class="d-flex justify-content-center">
+            <b>Categories:</b>
+            <div class="d-flex g-4">
+                {% for category in categories %}
+                <a href="/products/categories/{{ category }}">
+                    <span class="badge text-bg-primary m-1">{{ category }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
         {% block content %}{% endblock %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script src="/static/app.js"></script>

@@ -170,6 +170,17 @@ class ProductModel(db.Model):
     cart = db.relationship(
         "User", secondary=cart_association, backref="products")
     
+    @classmethod
+    def get_categories(cls):
+        """ returns categories as a list """
+        
+        categories = set()
+        
+        for prod in cls.query.all():
+            categories.add(prod.category)
+            
+        return categories
+    
     def slugify(self):
         """ turns sloppy plain text into URL friendly route """
         
