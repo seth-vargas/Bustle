@@ -351,4 +351,5 @@ def delete_favorite():
     return jsonify({"data": data})
     
 
+# TODO : Update password
 # TODO : Checkout
