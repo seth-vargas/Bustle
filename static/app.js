@@ -64,7 +64,6 @@ async function removeFromCart() {
     updateHtmlOnCartUpdate(method, element)
 }
 
-// TODO : Handle adding to favorites
 async function addToFavorites(e) {
     e.preventDefault()
     console.log(this)
@@ -78,7 +77,6 @@ async function addToFavorites(e) {
     updateHtmlOnFavoritestUpdate(method, element)
 }
 
-// TODO : Handle removing from favorites
 async function removeFromFavorites(e) {
     e.preventDefault()
     const productId = this.dataset.id

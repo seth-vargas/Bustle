@@ -7,7 +7,7 @@ Capstone project!
 import requests
 from secrets import secret_password, stripe_key
 from forms import AddUserForm, LoginForm, EditUserForm
-from models import db, connect_db, ProductModel, User
+from models import db, connect_db, ProductModel, User, deslugify
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
 import stripe
@@ -49,7 +49,7 @@ def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = User.query.get_or_404(session[CURR_USER_KEY])
 
     else:
         g.user = None
@@ -149,7 +149,7 @@ def logout():
         return redirect("/")
 
     do_logout()
-    user = User.query.get(g.user.id)
+    user = User.query.get_or_404(g.user.id)
     flash(f"Goodbye {user.first_name}!", "warning")
     return redirect("/")
 
@@ -170,21 +170,22 @@ def show_all_products():
 @app.route("/products/<id>")
 def show_product(id):
     """ Shows a product """
-    product = ProductModel.query.get(id)
+    product = ProductModel.query.get_or_404(id)
 
     similar_products = ProductModel.query.filter(
         ProductModel.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, )
+    return render_template("products/product.html", product=product, similar_products=similar_products)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-@app.route("/products/<category>")
+@app.route("/products/categories/<category>")
 def show_products_by_category(category):
     """ Shows list of products by category """
 
-    products = Product.query.filter(Product.category == category).all()
+    category = deslugify(category)
+    products = ProductModel.query.filter(ProductModel.category == category).all()
 
     return render_template("products/list-products.html", products=products, category=category)
 
@@ -195,7 +196,7 @@ def show_products_by_category(category):
 def show_account():
     """ Shows the account of the logged in user. If not logged in, redirects to home """
     if g.user:
-        user = User.query.get(g.user.id)
+        user = User.query.get_or_404(g.user.id)
         return render_template("account.html", user=user)
     else:
         return redirect("/login")
@@ -250,11 +251,11 @@ def cart():
         return redirect("/login")
 
     else:
-        user = User.query.get(g.user.id)
+        user = User.query.get_or_404(g.user.id)
         
         if request.method == "POST":
-            prod_id = int(request.get_json()["id"])
-            product = Product.query.get_or_404(prod_id)
+            prod_id = request.get_json()["id"]
+            product = ProductModel.query.get_or_404(prod_id)
             
             user.cart.append(product)
             db.session.commit()
@@ -278,8 +279,8 @@ def remove_from_cart():
     
     user = User.query.get_or_404(g.user.id)
     
-    prod_id = int(request.get_json()["id"])
-    product = Product.query.get_or_404(prod_id)
+    prod_id = request.get_json()["id"]
+    product = ProductModel.query.get_or_404(prod_id)
     
     user.cart.remove(product)
     db.session.commit()
@@ -302,8 +303,8 @@ def show_favorites():
     user = User.query.get_or_404(g.user.id)
 
     if request.method == "POST":
-        prod_id = int(request.get_json()["id"])
-        product = Product.query.get_or_404(prod_id)
+        prod_id = request.get_json()["id"]
+        product = ProductModel.query.get_or_404(prod_id)
         
         user.favorites.append(product)
         db.session.commit()

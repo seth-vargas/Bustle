@@ -160,3 +160,12 @@ class ProductModel(db.Model):
     cart = db.relationship(
         "User", secondary=cart_association, backref="products")
     
+    def slugify(self):
+        """ turns sloppy plain text into URL friendly route """
+        
+        return self.category.replace(" ", "-")
+
+def deslugify(category):
+    """ turns URL friendly route into sloppy plain text """
+    
+    return category.replace("-", " ")

@@ -9,7 +9,8 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Products</a></li>
-                <li class="breadcrumb-item"><a href="/products/{{ product.category }}">{{ product.category }}</a></li>
+                <li class="breadcrumb-item"><a href="/products/categories/{{ product.slugify() }}">{{ product.category
+                        }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
             </ol>
         </nav>
@@ -34,18 +35,21 @@
                         <h4>Product Description:</h4>
                         <p>{{ product.description }}</p>
                         <div class="row">
-                            <!-- <form action="/cart" method="post" class="d-grid mx-5 my-2">
-                                <button class="btn btn-outline-dark">Add to cart</button>
-                            </form> -->
-                            <form action="/cart" class="d-grid mx-5 my-2 add-to-cart" data-id="{{ product.id }}" method="post">
+                            <form action="/cart" class="d-grid mx-5 my-2 add-to-cart" data-id="{{ product.id }}"
+                                method="post">
                                 {% if product in g.user.cart %}
                                 <button class="btn btn-success disabled">Already in cart!</button>
                                 {% else %}
                                 <button class="btn btn-outline-dark">Add to cart</button>
                                 {% endif %}
                             </form>
-                            <form action="/favorites" method="post" class="d-grid mx-5 my-2">
-                                <button class="btn btn-outline-secondary">Add to favorites</button>
+                            <form action="/favorites" class="d-grid mx-5 my-2 add-to-favorites"
+                                data-id="{{ product.id }}" method="post">
+                                {% if product in g.user.favorites %}
+                                <button class="btn btn-outline-success disabled">Already in your favorites!</button>
+                                {% else %}
+                                <button class="btn btn-outline-dark">Add to favorites</button>
+                                {% endif %}
                             </form>
                         </div>
                     </div>
@@ -65,7 +69,6 @@
                 <div class="col-4">
                     <div class="card mx-5 w-75 mx-auto">
                         <div class="card-body">
-
                             <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
                             <p class="card-text">{{ product.title }}</p>
                             <a href="/products/{{ product.id }}" class="stretched-link"></a>
@@ -86,8 +89,14 @@
                         <button class="btn btn-outline-dark">Add to cart</button>
                         {% endif %}
                     </form>
-                    <form action="/favorites" class="d-grid mx-4 my-2" method="post">
-                        <button class="btn btn-outline-secondary">Add to favorites</button>
+
+                    <form action="/favorites" class="d-grid mx-4 my-2 add-to-favorites" data-id="{{ product.id }}"
+                        method="post">
+                        {% if product in g.user.favorites %}
+                        <button class="btn btn-outline-success disabled">Already in your favorites!</button>
+                        {% else %}
+                        <button class="btn btn-outline-dark">Add to favorites</button>
+                        {% endif %}
                     </form>
                 </div>
                 {% endfor %}
