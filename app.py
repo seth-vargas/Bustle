@@ -158,7 +158,7 @@ def logout():
 # General routes for app
 @app.route("/products")
 def show_all_products():
-    
+
     products = ProductModel.query.all()
 
     return render_template("products/list-products.html", products=products)
@@ -185,7 +185,8 @@ def show_products_by_category(category):
     """ Shows list of products by category """
 
     category = deslugify(category)
-    products = ProductModel.query.filter(ProductModel.category == category).all()
+    products = ProductModel.query.filter(
+        ProductModel.category == category).all()
 
     return render_template("products/list-products.html", products=products, category=category)
 
@@ -217,9 +218,9 @@ def edit_account():
         if user.authenticate(user.email, form.password.data):
             # User is authenticated, update info
             user.first_name = form.first_name.data.title() or user.first_name
-            user.last_name=form.last_name.data.title() or user.last_name
-            user.email=form.email.data.lower() or user.email
-                        
+            user.last_name = form.last_name.data.title() or user.last_name
+            user.email = form.email.data.lower() or user.email
+
         else:
             # User is not authenticated, kick them back to the form
             flash("Entered incorrect password", "danger")
@@ -227,17 +228,22 @@ def edit_account():
         try:
             db.session.add(user)
             db.session.commit()
-                
+
         except IntegrityError:
             db.session.rollback()
-            flash("The e-mail address you entered is already in use, please try another.", "danger")
+            flash(
+                "The e-mail address you entered is already in use, please try another.", "danger")
             return render_template("forms/edit-user.html", form=form)
-        
+
         flash("Your account has been updated.", "success")
         return redirect(f"/my-account")
-    
+
     return render_template("/forms/edit-user.html", form=form)
-        
+
+
+@app.route("/my-account/change-password")
+def user_forgot_password():
+    """ Logged in user can change their password here """
 
 @app.route("/cart", methods=["GET", "POST"])
 def cart():
@@ -252,104 +258,104 @@ def cart():
 
     else:
         user = User.query.get_or_404(g.user.id)
-        
+
         if request.method == "POST":
             prod_id = request.get_json()["id"]
             product = ProductModel.query.get_or_404(prod_id)
-            
+
             user.cart.append(product)
             db.session.commit()
-            
+
             data = {
                 "message": f"Added {product.title} to cart.",
                 "method": f"{request.method}"
             }
-            
+
             return jsonify({"data": data})
         else:
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
-        
+
 
 @app.route("/cart/delete", methods=["DELETE"])
 def remove_from_cart():
     if not g.user:
         flash("Please log in to interact with your shopping cart", "danger")
         return redirect("/login")
-    
+
     user = User.query.get_or_404(g.user.id)
-    
+
     prod_id = request.get_json()["id"]
     product = ProductModel.query.get_or_404(prod_id)
-    
+
     user.cart.remove(product)
     db.session.commit()
-    
+
     data = {
         "message": f"Removed {product.title} from cart.",
         "method": f"{request.method}"
     }
-    
+
     return jsonify({"data": data})
+
 
 @app.route("/favorites", methods=["GET", "POST"])
 def show_favorites():
     """ shows user their favorites if logged in """
-    
+
     if not g.user:
         flash("Please log in to view your favorites list", "danger")
         return redirect("/login")
-        
+
     user = User.query.get_or_404(g.user.id)
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]
         product = ProductModel.query.get_or_404(prod_id)
-        
+
         user.favorites.append(product)
         db.session.commit()
-        
+
         data = {
             "message": f"Added {product.title} to favorites.",
             "method": f"{request.method}"
         }
-        
+
         return jsonify({"data": data})
-        
+
     elif request.method == "GET":
         favorites = user.favorites
         return render_template("favorites.html", favorites=favorites)
-    
+
     else:
         return render_template("invalid-method.html")
-    
+
 
 @app.route("/favorites/delete", methods=["DELETE"])
 def delete_favorite():
     """ deletes a favorite from user.favorites in the db """
-    
+
     if not g.user:
         flash("Please log in to interact with your favorites")
         return redirect("/login")
-    
+
     if request.method != "DELETE":
         return render_template("invalid-method.html")
-    
+
     user = User.query.get_or_404(g.user.id)
-    
+
     prod_id = request.get_json()["id"]
     product = ProductModel.query.get_or_404(prod_id)
-    
+
     user.favorites.remove(product)
     db.session.commit()
-    
+
     data = {
         "message": f"Removed {product.title} from favorites.",
         "method": f"{request.method}"
     }
-    
-    return jsonify({"data": data})
-    
 
-# TODO : Update password
+    return jsonify({"data": data})
+
+
 # TODO : Checkout
