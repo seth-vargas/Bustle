@@ -50,27 +50,32 @@
         </div>
     </nav>
     <div class="container">
-        <div id="flashed-messages">
-            {% for category, message in get_flashed_messages(with_categories=True) %}
-            <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
-                <small><b>{{ message }}</b></small>
-                <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+        <div class="row">
+            <div id="flashed-messages">
+                {% for category, message in get_flashed_messages(with_categories=True) %}
+                <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
+                    <small><b>{{ message }}</b></small>
+                    <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        {% if categories %}
-        <div class="d-flex justify-content-center">
-            <b>Categories:</b>
-            <div class="d-flex g-4">
+            {% if categories %}
+            <div class="d-flex g-2 justify-content-center">
                 {% for category in categories %}
                 <a href="/products/categories/{{ category }}">
-                    <span class="badge text-bg-primary m-1">{{ category }}</span>
+                    {% if category == request.path.split("/")[3] %}
+                    <span class="badge text-bg-info m-1 active">{{ category }}</span>
+                    {% else %}
+                    <span class="badge text-bg-dark m-1">{{ category }}</span>
+                    {% endif %}
                 </a>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
-        {% endif %}
-        {% block content %}{% endblock %}
+        <div class="row">
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
