@@ -41,23 +41,35 @@ async function deleteData(url="", data={}) {
     return response.json()
 }
 
+function isUserLoggedIn(data) {
+    if (data["class"] === "danger") {
+        $("#flashed-messages").replaceWith(`
+        <div class="alert alert-${data["class"]} mx-auto my-1 rounded-pill text-center" id="flashed-messages">
+        <small class="my-auto"><b>${data["message"]}</b></small>
+        <button type="button" class="btn-close m-auto" aria-label="Close"></button>
+        </div>
+        `)
+        return false
+    }
+    return true
+}
+
 async function addToCart(e) {
     e.preventDefault()
     const productId = this.dataset.id
-
     const response = await postData(`/cart`, {id: productId})
+    const data = response["response"]
 
-    const method = response["data"]["method"]
-    const element = this
-
-    updateHtmlOnCartUpdate(method, element)
+    if (isUserLoggedIn(data)) {
+        const method = response["data"]["method"]
+        const element = this
+        updateHtmlOnCartUpdate(method, element)
+    }
 }
 
 async function removeFromCart() {
     const productId = this.dataset.id
-    
     const response = await deleteData("/cart/delete", {id: productId})
-
     const method = response["data"]["method"]
     const element = this.closest(".row")
 
@@ -68,21 +80,20 @@ async function addToFavorites(e) {
     e.preventDefault()
     console.log(this)
     const productId = this.dataset.id
-
     const response = await postData("/favorites", {id: productId})
+    const data = response["response"]
 
-    const method = response["data"]["method"]
-    const element = this
-
-    updateHtmlOnFavoritestUpdate(method, element)
+    if (isUserLoggedIn(data)) {
+        const method = response["data"]["method"]
+        const element = this
+        updateHtmlOnFavoritestUpdate(method, element)
+    }
 }
 
 async function removeFromFavorites(e) {
     e.preventDefault()
     const productId = this.dataset.id
-    
     const response = await deleteData("/favorites/delete", {id: productId})
-
     const method = response["data"]["method"]
     const element = this.closest(".col-sm-3")
 

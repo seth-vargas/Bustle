@@ -286,8 +286,11 @@ def cart():
     """
 
     if not g.user:
-        flash("Please log in to interact with your shopping cart", "danger")
-        return redirect("/login")
+        data = {
+            "message": "Please log in to interact with your shopping cart",
+            "class": "danger"
+        }
+        return jsonify({"response": data})
 
     else:
         user = User.query.get_or_404(g.user.id)
@@ -304,7 +307,7 @@ def cart():
                 "method": f"{request.method}"
             }
 
-            return jsonify({"data": data})
+            return jsonify({"response": data})
         else:
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
@@ -329,7 +332,7 @@ def remove_from_cart():
         "method": f"{request.method}"
     }
 
-    return jsonify({"data": data})
+    return jsonify({"response": data})
 
 
 @app.route("/favorites", methods=["GET", "POST"])
@@ -337,8 +340,11 @@ def show_favorites():
     """ shows user their favorites if logged in """
 
     if not g.user:
-        flash("Please log in to view your favorites list", "danger")
-        return redirect("/login")
+        data = {
+            "message": "Please log in to interact with your favorites list",
+            "class": "danger"
+        }
+        return jsonify({"response": data})
 
     user = User.query.get_or_404(g.user.id)
 
@@ -354,7 +360,7 @@ def show_favorites():
             "method": f"{request.method}"
         }
 
-        return jsonify({"data": data})
+        return jsonify({"response": data})
 
     elif request.method == "GET":
         favorites = user.favorites
@@ -388,7 +394,7 @@ def delete_favorite():
         "method": f"{request.method}"
     }
 
-    return jsonify({"data": data})
+    return jsonify({"response": data})
 
 
 # TODO : Checkout
