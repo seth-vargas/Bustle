@@ -2,6 +2,27 @@ $( ".add-to-cart" ).on( "submit" , addToCart )
 $( ".remove-from-cart" ).on( "click", removeFromCart )
 $( ".add-to-favorites" ).on( "submit" , addToFavorites )
 $( ".remove-from-favorites" ).on( "submit", removeFromFavorites )
+$( ".btn-close" ).on( "click", closeFlashedMessage )
+
+function closeFlashedMessage() {
+    console.log(this.parentElement.remove())
+}
+
+function isUserLoggedIn(data) {
+    if (data["class"] === "danger") {
+        $("#flashed-messages").replaceWith(`
+        <div id="flashed-messages">
+        <div class="alert alert-${data["class"]} mx-auto my-1 rounded-pill text-center">
+        <small class="my-auto"><b>${data["message"]}</b></small>
+        <button type="button" class="btn-close m-auto" aria-label="Close"></button>
+        </div>
+        </div>
+        `)
+        $( ".btn-close" ).on( "click", closeFlashedMessage )
+        return false
+    }
+    return true
+}
 
 function updateHtmlOnCartUpdate(method, element) {
     if (method === "POST") {
@@ -41,19 +62,6 @@ async function deleteData(url="", data={}) {
     return response.json()
 }
 
-function isUserLoggedIn(data) {
-    if (data["class"] === "danger") {
-        $("#flashed-messages").replaceWith(`
-        <div class="alert alert-${data["class"]} mx-auto my-1 rounded-pill text-center" id="flashed-messages">
-        <small class="my-auto"><b>${data["message"]}</b></small>
-        <button type="button" class="btn-close m-auto" aria-label="Close"></button>
-        </div>
-        `)
-        return false
-    }
-    return true
-}
-
 async function addToCart(e) {
     e.preventDefault()
     const productId = this.dataset.id
@@ -78,7 +86,6 @@ async function removeFromCart() {
 
 async function addToFavorites(e) {
     e.preventDefault()
-    console.log(this)
     const productId = this.dataset.id
     const response = await postData("/favorites", {id: productId})
     const data = response["response"]

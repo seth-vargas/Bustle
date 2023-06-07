@@ -51,13 +51,13 @@
     </nav>
     <div class="container">
         <div id="flashed-messages">
-        {% for category, message in get_flashed_messages(with_categories=True) %}
-        <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
-            <small><b>{{ message }}</b></small>
-            <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
+                <small><b>{{ message }}</b></small>
+                <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
         {% if categories %}
         <div class="d-flex justify-content-center">
             <b>Categories:</b>
