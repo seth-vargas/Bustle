@@ -5,7 +5,7 @@ $( ".remove-from-favorites" ).on( "submit", removeFromFavorites )
 $( ".btn-close" ).on( "click", closeFlashedMessage )
 
 function closeFlashedMessage() {
-    console.log(this.parentElement.remove())
+    this.parentElement.remove()
 }
 
 function isUserLoggedIn(data) {
