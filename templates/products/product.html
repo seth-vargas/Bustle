@@ -23,7 +23,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <img src="{{ product.image }}" style="max-height: 30rem; max-width: 100%">
+            <img src="{{ product.image }}" class="mx-auto d-block" style="max-height: 30rem; width: auto">
         </div>
         <div class="col-8">
             <div class="row mx-5">
@@ -69,7 +69,7 @@
                 <div class="col">
                     <div class="card bg-light">
                         <div class="card-body">
-                            <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
+                            <img src="{{ product.image }}" class="card-img-top mx-auto d-block" style="height: 10rem; width: auto">
                             <p class="card-text">{{ product.title }}</p>
                             <a href="/products/{{ product.id }}" class="stretched-link"></a>
                             <h5 class="card-title">
