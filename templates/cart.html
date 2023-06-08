@@ -36,7 +36,7 @@
     </ul>
     <div class="row">
         {% with  sum = cart | sum(attribute="price") %}
-        <h2>Subtotal: {{ "$%.2f" | format(sum) }}</b></h2>
+        <h2>Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h2>
         {% endwith %}
     </div>
 
