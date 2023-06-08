@@ -158,10 +158,18 @@ def logout():
 # General routes for app
 @app.route("/products")
 def show_all_products():
+    
+    search = request.args.get('q')
+    
+    if not search:
+        products = ProductModel.query.all()
+    else:
+        products = ProductModel.query.filter(
+            ProductModel.title.ilike(f"%{search}%") |
+            ProductModel.category.ilike(f"%{search}%")
+        ).all()
 
-    products = ProductModel.query.all()
-
-    return render_template("products/list-products.html", products=products, categories=categories)
+    return render_template("products/list-products.html", products=products, categories=categories, search=search)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

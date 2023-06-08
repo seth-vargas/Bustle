@@ -16,8 +16,8 @@
     <nav class="navbar navbar-dark bg-dark justify-content-center " data-bs-theme="light">
         <div class="container-fluid">
             <a class="navbar-brand ms-5" href="/products">Bustle</a>
-            <form class="d-flex w-25">
-                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex w-25" action="/products">
+                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search" name="q" {% if search %} value="{{ search }} {% endif %}">
             </form>
             {% if g.user %}
             <div class="dropstart me-5">
