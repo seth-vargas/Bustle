@@ -49,29 +49,21 @@
         </div>
         </div>
     </nav>
-    <div class="container">
+
+    <div class="container ms-0">
         <div class="row">
-            <div id="flashed-messages">
-                {% for category, message in get_flashed_messages(with_categories=True) %}
-                <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
-                    <small><b>{{ message }}</b></small>
-                    <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+            <div class="position-relative">
+                <div class="row position-absolute top-50 start-50 translate-middle">
+                    <div id="flashed-messages">
+                        {% for category, message in get_flashed_messages(with_categories=True) %}
+                        <div class="alert alert-{{ category }} mx-auto rounded-pill text-center">
+                            <small><b>{{ message }}</b></small>
+                            <button type="button" class="btn-close my-auto" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endfor %}
             </div>
-            {% if categories %}
-            <div class="d-flex g-2 justify-content-center">
-                {% for category in categories %}
-                <a href="/products/categories/{{ category }}">
-                    {% if category == request.path.split("/")[3] %}
-                    <span class="badge text-bg-info m-1 active">{{ category }}</span>
-                    {% else %}
-                    <span class="badge text-bg-dark m-1">{{ category }}</span>
-                    {% endif %}
-                </a>
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
         <div class="row">
             {% block content %}{% endblock %}

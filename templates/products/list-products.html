@@ -3,77 +3,97 @@
 {% block title %}{% if category %} {{ category }} {% else %} Products {% endif %}{% endblock %}
 
 {% block content %}
+
 {% if category %}
 <div class="row mt-3">
     <div class="row">
         <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Products</a></li>
-                <li class="breadcrumb-item"><a href="/products/{{ category }}">{{ category }}</a></li>
+                <li class="breadcrumb-item"><a href="/products/categories/{{ category }}">{{ category }}</a></li>
             </ol>
         </nav>
     </div>
 </div>
 {% endif %}
 
-{% if category %}
-<div class="row">
-    <div class="col">
-        <h1 class="text-center">{{ category }}</h1>
+<div class="col bg-dark">
+    <h1 class="text-light">Categories:</h1>
+    <div class="d-flex flex-column g-2 justify-content-center">
+        {% for category in categories %}
+        <a href="/products/categories/{{ category }}">
+            {% if category == request.path.split("/")[3] %}
+            <span class="badge text-bg-info m-1 active">{{ category }}</span>
+            {% else %}
+            <span class="badge text-bg-dark m-1">{{ category }}</span>
+            {% endif %}
+        </a>
+        {% endfor %}
     </div>
 </div>
-{% else %}
-<div class="row">
-    <div class="col">
-        <h1 class="text-center">All Products</h1>
-    </div>
-</div>
-{% endif %}
 
-
-<div class="row row-cols-1 row-cols-md-4 g-4">
-    {% for product in products %}
-
-    <div class="col-sm-3">
-
-        <div class="card my-3">
-            <div class="card-body">
-
-                <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
-
-                <p class="card-text">{{ product.title }}</p>
-
-                <a href="/products/{{ product.id }}" class="stretched-link"></a>
-
-                <h5 class="card-title">
-                    <div class="d-flex justify-content-between">
-                        ${{ "%.2f" | format(product.price) }}
-                        <span>
-                            {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
-                        </span>
-                    </div>
-                </h5>
-
+<div class="col-9">
+    <div class="row">
+        {% if category %}
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center">{{ category }}</h1>
             </div>
         </div>
+        {% else %}
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center">All Products</h1>
+            </div>
+        </div>
+        {% endif %}
 
-        <form action="/cart" class="d-grid mx-4 my-2 add-to-cart" data-id="{{ product.id }}" method="post">
-            {% if product in g.user.cart %}
-            <button class="btn btn-success disabled">Already in cart!</button>
-            {% else %}
-            <button class="btn btn-outline-dark">Add to cart</button>
-            {% endif %}
-        </form>
-
-        <form action="/favorites" class="d-grid mx-4 my-2 add-to-favorites" data-id="{{ product.id }}" method="post">
-            {% if product in g.user.favorites %}
-            <button class="btn btn-outline-success disabled">Already in your favorites!</button>
-            {% else %}
-            <button class="btn btn-outline-dark">Add to favorites</button>
-            {% endif %}
-        </form>
     </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for product in products %}
 
-    {%endfor%}
+        <div class="col-sm-3">
+
+            <div class="card my-3">
+                <div class="card-body">
+
+                    <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
+
+                    <p class="card-text">{{ product.title }}</p>
+
+                    <a href="/products/{{ product.id }}" class="stretched-link"></a>
+
+                    <h5 class="card-title">
+                        <div class="d-flex justify-content-between">
+                            ${{ "%.2f" | format(product.price) }}
+                            <span>
+                                {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
+                            </span>
+                        </div>
+                    </h5>
+
+                </div>
+            </div>
+
+            <form action="/cart" class="d-grid mx-4 my-2 add-to-cart" data-id="{{ product.id }}" method="post">
+                {% if product in g.user.cart %}
+                <button class="btn btn-success disabled">Already in cart!</button>
+                {% else %}
+                <button class="btn btn-outline-dark">Add to cart</button>
+                {% endif %}
+            </form>
+
+            <form action="/favorites" class="d-grid mx-4 my-2 add-to-favorites" data-id="{{ product.id }}"
+                method="post">
+                {% if product in g.user.favorites %}
+                <button class="btn btn-outline-success disabled">Already in your favorites!</button>
+                {% else %}
+                <button class="btn btn-outline-dark">Add to favorites</button>
+                {% endif %}
+            </form>
+        </div>
+
+        {%endfor%}
+    </div>
 </div>
 {% endblock %}
