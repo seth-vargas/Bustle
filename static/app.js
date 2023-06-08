@@ -69,7 +69,7 @@ async function addToCart(e) {
     const data = response["response"]
 
     if (isUserLoggedIn(data)) {
-        const method = response["data"]["method"]
+        const method = response["response"]["method"]
         const element = this
         updateHtmlOnCartUpdate(method, element)
     }
@@ -78,7 +78,7 @@ async function addToCart(e) {
 async function removeFromCart() {
     const productId = this.dataset.id
     const response = await deleteData("/cart/delete", {id: productId})
-    const method = response["data"]["method"]
+    const method = response["response"]["method"]
     const element = this.closest(".row")
 
     updateHtmlOnCartUpdate(method, element)
@@ -91,7 +91,7 @@ async function addToFavorites(e) {
     const data = response["response"]
 
     if (isUserLoggedIn(data)) {
-        const method = response["data"]["method"]
+        const method = response["response"]["method"]
         const element = this
         updateHtmlOnFavoritestUpdate(method, element)
     }
@@ -101,7 +101,7 @@ async function removeFromFavorites(e) {
     e.preventDefault()
     const productId = this.dataset.id
     const response = await deleteData("/favorites/delete", {id: productId})
-    const method = response["data"]["method"]
+    const method = response["response"]["method"]
     const element = this.closest(".col-sm-3")
 
     updateHtmlOnFavoritestUpdate(method, element)

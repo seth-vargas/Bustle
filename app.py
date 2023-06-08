@@ -25,7 +25,7 @@ stripe.api_key = stripe_key
 
 connect_db(app)
 
-
+categories = ProductModel.get_categories()
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Error Routes: not found, server error, client errors
@@ -158,11 +158,18 @@ def logout():
 # General routes for app
 @app.route("/products")
 def show_all_products():
+    
+    search = request.args.get('q')
+    
+    if not search:
+        products = ProductModel.query.all()
+    else:
+        products = ProductModel.query.filter(
+            ProductModel.title.ilike(f"%{search}%") |
+            ProductModel.category.ilike(f"%{search}%")
+        ).all()
 
-    products = ProductModel.query.all()
-    categories = ProductModel.get_categories()
-
-    return render_template("products/list-products.html", products=products, categories=categories)
+    return render_template("products/list-products.html", products=products, categories=categories, search=search)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -176,7 +183,7 @@ def show_product(id):
     similar_products = ProductModel.query.filter(
         ProductModel.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, similar_products=similar_products)
+    return render_template("products/product.html", product=product, similar_products=similar_products, categories=categories)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -398,3 +405,14 @@ def delete_favorite():
 
 
 # TODO : Checkout
+
+
+@app.after_request
+def add_header(req):
+    """Add non-caching headers on every request."""
+
+    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    req.headers["Pragma"] = "no-cache"
+    req.headers["Expires"] = "0"
+    req.headers['Cache-Control'] = 'public, max-age=0'
+    return req
