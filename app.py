@@ -25,7 +25,7 @@ stripe.api_key = stripe_key
 
 connect_db(app)
 
-
+categories = ProductModel.get_categories()
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Error Routes: not found, server error, client errors
@@ -160,7 +160,6 @@ def logout():
 def show_all_products():
 
     products = ProductModel.query.all()
-    categories = ProductModel.get_categories()
 
     return render_template("products/list-products.html", products=products, categories=categories)
 
@@ -176,7 +175,7 @@ def show_product(id):
     similar_products = ProductModel.query.filter(
         ProductModel.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, similar_products=similar_products)
+    return render_template("products/product.html", product=product, similar_products=similar_products, categories=categories)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
