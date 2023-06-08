@@ -3,25 +3,31 @@
 {% block title %}{% if category %} {{ category }} {% else %} Products {% endif %}{% endblock %}
 
 {% block content %}
-
-{% if category %}
-<div class="row mt-3">
-    <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Products</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ category }}
-        </ol>
-    </nav>
+<div class="row">
+    <div class="d-flex justify-content-between align-items-center">
+        {% if category %}
+        <div class="row mt-3">
+            <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ category }}
+                </ol>
+            </nav>
+        </div>
+        {% else %}
+        <div class="row mt-3">
+            <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Products</li>
+                </ol>
+            </nav>
+        </div>
+        {% endif %}
+        <button class="btn btn-sm btn-dark">
+            <i class="fa-solid fa-sort"></i>
+        </button>
+    </div>
 </div>
-{% else %}
-<div class="row mt-3">
-    <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">Products</li>
-        </ol>
-    </nav>
-</div>
-{% endif %}
 <div class="row">
     <div class="col-2">
         <ul class="list-group">
@@ -38,18 +44,24 @@
                 </div>
             </li>
             {% endfor %}
+            <li class="list-group-item">
+                {% with  sum = g.user.cart | sum(attribute="price") %}
+                <h2>Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h2>
+                {% endwith %}
+            </li>
+            <a href="/checkout" class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
+
         </ul>
     </div>
 
     <div class="col">
-        <div class="row row-cols-md-3 g-4">
+        <div class="row row-cols-xs-1 row-cols-sm-2  row-cols-md-2 row-cols-lg-4 g-4">
             {% for product in products %}
 
             <div class="col">
-
                 <div class="card bg-light">
                     <div class="card-body">
-                        <img src="{{ product.image }}" class="card-img-top" style="width:100%; height:auto">
+                        <img src="{{ product.image }}" class="card-img-top" style="max-height: 30rem; max-width: 100%">
                         <p class="card-text">{{ product.title }}</p>
                         <a href="/products/{{ product.id }}" class="stretched-link"></a>
                         <h5 class="card-title">
@@ -63,7 +75,7 @@
                     </div>
                 </div>
 
-                <form action="/cart" class="d-grid mx-4 my-2 add-to-cart" data-id="{{ product.id }}" method="post">
+                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post">
                     {% if product in g.user.cart %}
                     <button class="btn btn-success disabled">Already in cart!</button>
                     {% else %}
@@ -71,7 +83,7 @@
                     {% endif %}
                 </form>
 
-                <form action="/favorites" class="d-grid mx-4 my-2 add-to-favorites" data-id="{{ product.id }}"
+                <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="{{ product.id }}"
                     method="post">
                     {% if product in g.user.favorites %}
                     <button class="btn btn-outline-success disabled">Already in your favorites!</button>
@@ -80,7 +92,6 @@
                     {% endif %}
                 </form>
             </div>
-
             {%endfor%}
         </div>
     </div>
