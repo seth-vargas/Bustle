@@ -13,11 +13,11 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
+    <nav class="navbar navbar-dark bg-dark justify-content-center " data-bs-theme="light">
         <div class="container-fluid">
             <a class="navbar-brand ms-5" href="/products">Bustle</a>
-            <form class="d-flex w-25">
-                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex w-25" action="/products">
+                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search" name="q" {% if search %} value="{{ search }} {% endif %}">
             </form>
             {% if g.user %}
             <div class="dropstart me-5">
@@ -47,8 +47,14 @@
                 {% endif %}
             </ul>
         </div>
-        </div>
     </nav>
+    <nav class="navbar navbar-dark bg-secondary justify-content-start">
+        <b class="text-light mx-5">Categories</b>
+        {% for category in categories %}
+        <a href="/products/categories/{{ category }}" class="btn btn-secondary btn-sm">{{category }}</a>
+        {% endfor %}
+    </nav>
+
     <div class="container">
         <div class="row">
             <div id="flashed-messages">
@@ -59,22 +65,6 @@
                 </div>
                 {% endfor %}
             </div>
-            {% if categories %}
-            <div class="d-flex justify-content-center">
-                <b>Categories:</b>
-                <div class="d-flex g-4">
-                    {% for category in categories %}
-                    <a href="/products/categories/{{ category }}">
-                        {% if category == request.path.split("/")[3] %}
-                        <span class="badge text-bg-info m-1 active">{{ category }}</span>
-                        {% else %}
-                        <span class="badge text-bg-dark m-1">{{ category }}</span>
-                        {% endif %}
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
         </div>
         <div class="row">
             {% block content %}{% endblock %}

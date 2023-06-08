@@ -3,29 +3,26 @@
 {% block title %}{% if category %} {{ category }} {% else %} Products {% endif %}{% endblock %}
 
 {% block content %}
+
 {% if category %}
 <div class="row mt-3">
     <div class="row">
         <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Products</a></li>
-                <li class="breadcrumb-item"><a href="/products/{{ category }}">{{ category }}</a></li>
-            </ol>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ category }}
+                </ol>
         </nav>
     </div>
 </div>
-{% endif %}
-
-{% if category %}
-<div class="row">
-    <div class="col">
-        <h1 class="text-center">{{ category }}</h1>
-    </div>
-</div>
 {% else %}
-<div class="row">
-    <div class="col">
-        <h1 class="text-center">All Products</h1>
+<div class="row mt-3">
+    <div class="row">
+        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Products</li>
+                </ol>
+        </nav>
     </div>
 </div>
 {% endif %}
@@ -76,4 +73,5 @@
 
     {%endfor%}
 </div>
+
 {% endblock %}
