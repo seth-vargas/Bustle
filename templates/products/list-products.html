@@ -78,25 +78,26 @@
 
                 {% if product in g.user.cart %}
                 <div class="d-flex justify-content-evenly align-items-center">
-                    <form action="/cart" method="PATCH" class="decrement">
-                        <button class="btn btn-danger" data-id="{{ product.id }}" data-instructions="patch"><i
+                    <form action="/cart" method="PATCH" class="decrement" data-id="{{ product.id }}">
+                        <button class="btn btn-danger" data-id="{{ product.id }}"><i
                                 class="fa-solid fa-minus"></i></button>
                     </form>
                     {% with quantity = session["qty_" + product.id] %}
-                    <small><span id="quantity">{{ quantity }}</span> in cart</small>
-                    <form action="/cart" method="PATCH" class="increment">
+                    <small><span class="quantity">{{ quantity }}</span> in cart</small>
+                    <form action="/cart" method="PATCH" class="increment" data-id="{{ product.id }}">
                         <button class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
                     </form>
                     {% endwith %}
                 </div>
                 {% else %}
-                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post">
+                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post"
+                    data-instructions="post">
                     <button class="btn btn-outline-dark">Add to cart</button>
                     {% endif %}
                 </form>
 
                 <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="{{ product.id }}"
-                    method="post">
+                    method="post" data-instructions="post">
                     {% if product in g.user.favorites %}
                     <button class="btn btn-outline-success disabled">Already in your favorites!</button>
                     {% else %}

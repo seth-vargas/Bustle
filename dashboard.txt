@@ -16,7 +16,7 @@ I want there to be a limit of 10 products per page and for the user
 to be able to switch pages
 
 TODO : < quantity >
-Al products need a quantity that represents how many are in that 
+All products need a quantity that represents how many are in that 
 specific users cart at any given time. There should be 
 increment-decrement functionality as well
 

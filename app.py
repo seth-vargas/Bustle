@@ -281,7 +281,7 @@ def user_change_password():
 
 @app.route("/cart", methods=["GET", "POST", "PATCH"])
 def cart():
-    """ 
+    """
     GET: Show currently logged-in users cart as a list of products
     POST: Add product to cart of currently logged-in user
     PATCH: Increment or Decrement the quantity of an item in the cart
@@ -316,7 +316,7 @@ def cart():
                 "qty": session.get(f"qty_{prod_id}")
             }
 
-        else:
+        elif request.method == "PATCH": 
             session[f"qty_{prod_id}"] += 1
             
             data = {
@@ -324,8 +324,6 @@ def cart():
                 "method": f"{request.method}",
                 "qty": session.get(f"qty_{prod_id}")
             }
-            
-            print(data)
             
         return jsonify({"response": data})
 

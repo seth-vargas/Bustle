@@ -10,17 +10,16 @@ function closeFlashedMessage() {
   this.parentElement.remove();
 }
 
-function updateData(url = "", data = {}, instructions = "") {}
-
 async function updateQuantity(e) {
   e.preventDefault();
   console.log(this);
   const productId = this.dataset.id;
-  const cls = this.class;
-  const response = await updateData("cart", { id: productId }, cls);
+  const instructions = "PATCH";
+  const response = await postData("cart", { id: productId }, instructions);
   const data = response["response"];
 
   if (isUserLoggedIn(data)) {
+
   }
 }
 
@@ -51,7 +50,6 @@ function updateHtmlOnCartUpdate(method, element, qty) {
     </div>
     `;
     element.method = "patch";
-    debugger;
   } else {
     element.remove();
   }
@@ -65,10 +63,7 @@ function updateHtmlOnFavoritestUpdate(method, element) {
   }
 }
 
-async function postData(url = "", data = {}, instructions = "GET") {
-    if (instructions == "DELETE") {
-        const response = await fetch(url, )
-    }
+async function postData(url = "", data = {}, instructions) {
   const response = await fetch(url, {
     method: instructions,
     headers: {
@@ -97,7 +92,12 @@ async function addToCart(e) {
 async function removeFromCart() {
   const productId = this.dataset.id;
   const instructions = this.method;
-  const response = await postData("/cart/delete", { id: productId });
+  console.log(instructions);
+  const response = await postData(
+    "/cart/delete",
+    { id: productId },
+    instructions
+  );
   const method = response["response"]["method"];
   const element = this.closest(".row");
 
@@ -125,7 +125,7 @@ async function addToFavorites(e) {
 async function removeFromFavorites(e) {
   e.preventDefault();
   const productId = this.dataset.id;
-  const instructions = this.method;
+  const instructions = "DELETE";
   const response = await postData(
     "/favorites/delete",
     { id: productId },
