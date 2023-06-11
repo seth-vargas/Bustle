@@ -1,4 +1,6 @@
 $(".add-to-cart").on("submit", addToCart);
+$(".increment").on("submit", updateQuantity);
+$(".decrement").on("submit", updateQuantity);
 $(".remove-from-cart").on("click", removeFromCart);
 $(".add-to-favorites").on("submit", addToFavorites);
 $(".remove-from-favorites").on("submit", removeFromFavorites);
@@ -6,6 +8,20 @@ $(".btn-close").on("click", closeFlashedMessage);
 
 function closeFlashedMessage() {
   this.parentElement.remove();
+}
+
+function updateData(url = "", data = {}, instructions = "") {}
+
+async function updateQuantity(e) {
+  e.preventDefault();
+  console.log(this);
+  const productId = this.dataset.id;
+  const cls = this.class;
+  const response = await updateData("cart", { id: productId }, cls);
+  const data = response["response"];
+
+  if (isUserLoggedIn(data)) {
+  }
 }
 
 function isUserLoggedIn(data) {
@@ -25,9 +41,17 @@ function isUserLoggedIn(data) {
   return true;
 }
 
-function updateHtmlOnCartUpdate(method, element) {
+function updateHtmlOnCartUpdate(method, element, qty) {
   if (method === "POST") {
-    element.innerHTML = `<button class="btn btn-success disabled">Added to cart!</button>`;
+    element.innerHTML = `
+    <div class="d-flex justify-content-evenly align-items-center">
+    <button class="btn btn-danger"><i class="fa-solid fa-minus"></i></button>
+    <small>${qty} in cart</small>
+    <button class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
+    </div>
+    `;
+    element.method = "patch";
+    debugger;
   } else {
     element.remove();
   }
@@ -41,20 +65,12 @@ function updateHtmlOnFavoritestUpdate(method, element) {
   }
 }
 
-async function postData(url = "", data = {}) {
+async function postData(url = "", data = {}, instructions = "GET") {
+    if (instructions == "DELETE") {
+        const response = await fetch(url, )
+    }
   const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  return response.json();
-}
-
-async function deleteData(url = "", data = {}) {
-  const response = await fetch(url, {
-    method: "DELETE",
+    method: instructions,
     headers: {
       "Content-Type": "application/json",
     },
@@ -66,19 +82,22 @@ async function deleteData(url = "", data = {}) {
 async function addToCart(e) {
   e.preventDefault();
   const productId = this.dataset.id;
-  const response = await postData(`/cart`, { id: productId });
+  const instructions = this.method;
+  const response = await postData(`/cart`, { id: productId }, instructions);
   const data = response["response"];
 
   if (isUserLoggedIn(data)) {
     const method = response["response"]["method"];
     const element = this;
-    updateHtmlOnCartUpdate(method, element);
+    const qty = response["response"]["qty"];
+    updateHtmlOnCartUpdate(method, element, qty);
   }
 }
 
 async function removeFromCart() {
   const productId = this.dataset.id;
-  const response = await deleteData("/cart/delete", { id: productId });
+  const instructions = this.method;
+  const response = await postData("/cart/delete", { id: productId });
   const method = response["response"]["method"];
   const element = this.closest(".row");
 
@@ -88,7 +107,12 @@ async function removeFromCart() {
 async function addToFavorites(e) {
   e.preventDefault();
   const productId = this.dataset.id;
-  const response = await postData("/favorites", { id: productId });
+  const instructions = this.method;
+  const response = await postData(
+    "/favorites",
+    { id: productId },
+    instructions
+  );
   const data = response["response"];
 
   if (isUserLoggedIn(data)) {
@@ -101,7 +125,12 @@ async function addToFavorites(e) {
 async function removeFromFavorites(e) {
   e.preventDefault();
   const productId = this.dataset.id;
-  const response = await deleteData("/favorites/delete", { id: productId });
+  const instructions = this.method;
+  const response = await postData(
+    "/favorites/delete",
+    { id: productId },
+    instructions
+  );
   const method = response["response"]["method"];
   const element = this.closest(".col-sm-3");
 

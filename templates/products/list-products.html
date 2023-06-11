@@ -45,7 +45,7 @@
             </li>
             {% endfor %}
             <li class="list-group-item">
-                {% with  sum = g.user.cart | sum(attribute="price") %}
+                {% with sum = g.user.cart | sum(attribute="price") %}
                 <h2>Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h2>
                 {% endwith %}
             </li>
@@ -61,7 +61,8 @@
             <div class="col">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <img src="{{ product.image }}" class="card-img-top mx-auto d-block" style="height: 10rem; width: auto">
+                        <img src="{{ product.image }}" class="card-img-top mx-auto d-block"
+                            style="height: 10rem; width: auto">
                         <p class="card-text">{{ product.title }}</p>
                         <a href="/products/{{ product.id }}" class="stretched-link"></a>
                         <h5 class="card-title">
@@ -75,10 +76,21 @@
                     </div>
                 </div>
 
+                {% if product in g.user.cart %}
+                <div class="d-flex justify-content-evenly align-items-center">
+                    <form action="/cart" method="PATCH" class="decrement">
+                        <button class="btn btn-danger" data-id="{{ product.id }}" data-instructions="patch"><i
+                                class="fa-solid fa-minus"></i></button>
+                    </form>
+                    {% with quantity = session["qty_" + product.id] %}
+                    <small><span id="quantity">{{ quantity }}</span> in cart</small>
+                    <form action="/cart" method="PATCH" class="increment">
+                        <button class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
+                    </form>
+                    {% endwith %}
+                </div>
+                {% else %}
                 <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post">
-                    {% if product in g.user.cart %}
-                    <button class="btn btn-success disabled">Already in cart!</button>
-                    {% else %}
                     <button class="btn btn-outline-dark">Add to cart</button>
                     {% endif %}
                 </form>

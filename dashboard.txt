@@ -1,0 +1,36 @@
+Capstone project dashboard!
+
+- - - - - - - - - - - - - - - - AGENDA - - - - - - - - - - - - - - - 
+[]  quantity
+[]  proposal
+[]  pagination
+[]  sort
+[]  wide images
+
+- - - - - - - - - - - - - - - - TODOS - - - - - - - - - - - - - - - -
+TODO < proposal >
+Project proposal revision needs to be completed before turning in
+
+TODO : < pagination > 
+I want there to be a limit of 10 products per page and for the user 
+to be able to switch pages
+
+TODO : < quantity >
+Al products need a quantity that represents how many are in that 
+specific users cart at any given time. There should be 
+increment-decrement functionality as well
+
+TODO : < update total in DOM >
+HTML total prices update when adding to and removing from cart 
+
+TODO : < sort >
+Sort by price, ratings, or unsorted
+
+TODO: < turn in >
+Setup Heroku and deploy
+
+- - - - - - - - - - - - - - - - BUGS - - - - - - - - - - - - - - - - -
+BUG  < wide images >
+Some product images are too wide for the card container. NOTE that
+this can be fixed by either going back to tall cards OR by making the
+cards themselves wider

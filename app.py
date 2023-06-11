@@ -1,15 +1,9 @@
-"""
-Capstone project!
-
-# TODO: Project proposal revision
-# TODO: Setup Heroku and deploy
-"""
 import requests
 from secrets import secret_password, stripe_key
 from forms import AddUserForm, LoginForm, EditUserForm, ChangePasswordForm
 from models import db, connect_db, ProductModel, User, deslugify
 from sqlalchemy.exc import IntegrityError
-from flask import Flask, render_template, redirect, flash, session, g, request, jsonify
+from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
 import stripe
 
 
@@ -158,9 +152,9 @@ def logout():
 # General routes for app
 @app.route("/products")
 def show_all_products():
-    
+
     search = request.args.get('q')
-    
+
     if not search:
         products = ProductModel.query.all()
     else:
@@ -252,7 +246,7 @@ def edit_account():
 
 @app.route("/my-account/change-password", methods=["GET", "POST"])
 def user_change_password():
-    """ Logged in user can change their password here """ 
+    """ Logged in user can change their password here """
     if not g.user:
         flash("Please log in.", "danger")
         return redirect("/login")
@@ -285,11 +279,12 @@ def user_change_password():
     return render_template("/forms/change-password.html", form=form)
 
 
-@app.route("/cart", methods=["GET", "POST"])
+@app.route("/cart", methods=["GET", "POST", "PATCH"])
 def cart():
     """ 
     GET: Show currently logged-in users cart as a list of products
     POST: Add product to cart of currently logged-in user
+    PATCH: Increment or Decrement the quantity of an item in the cart
     """
 
     if not g.user:
@@ -302,22 +297,37 @@ def cart():
     else:
         user = User.query.get_or_404(g.user.id)
 
+        if request.method == "GET":
+            cart = user.cart
+            return render_template("cart.html", user=user, cart=cart)
+
+        prod_id = request.get_json()["id"]
+        product = ProductModel.query.get_or_404(prod_id)
+        
         if request.method == "POST":
-            prod_id = request.get_json()["id"]
-            product = ProductModel.query.get_or_404(prod_id)
+            session[f"qty_{prod_id}"] = 1
 
             user.cart.append(product)
             db.session.commit()
 
             data = {
                 "message": f"Added {product.title} to cart.",
-                "method": f"{request.method}"
+                "method": f"{request.method}",
+                "qty": session.get(f"qty_{prod_id}")
             }
 
-            return jsonify({"response": data})
         else:
-            cart = user.cart
-            return render_template("cart.html", user=user, cart=cart)
+            session[f"qty_{prod_id}"] += 1
+            
+            data = {
+                "message": f"Added {product.title} to cart.",
+                "method": f"{request.method}",
+                "qty": session.get(f"qty_{prod_id}")
+            }
+            
+            print(data)
+            
+        return jsonify({"response": data})
 
 
 @app.route("/cart/delete", methods=["DELETE"])
