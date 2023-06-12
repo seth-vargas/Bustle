@@ -56,7 +56,7 @@
 
     <div class="col">
         <div class="row row-cols-xs-1 row-cols-sm-2  row-cols-md-2 row-cols-lg-4 g-4">
-            {% for product in products %}
+            {% for product in products.items %}
 
             <div class="col">
                 <div class="card bg-light">
@@ -108,6 +108,17 @@
             </div>
             {%endfor%}
         </div>
+        {% for page_num in products.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}   
+                {% if products.page == page_num %}
+                <a href="{{ url_for('show_all_products', page=page_num) }}" class="btn btn-info mb-4">{{ page_num }}</a>
+                {% else %}
+                <a href="{{ url_for('show_all_products', page=page_num) }}" class="btn btn-outline-info mb-4">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+            ...
+            {% endif %}
+        {%endfor%}
     </div>
 </div>
 

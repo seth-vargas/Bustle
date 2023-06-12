@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <a class="navbar-brand ms-5" href="/products">Bustle</a>
             <form class="d-flex w-25" action="/products">
-                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search" name="q"
+                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search" name="search"
                     {% if search %} value="{{ search }} {% endif %}">
             </form>
             {% if g.user %}

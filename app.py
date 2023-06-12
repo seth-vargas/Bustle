@@ -153,15 +153,16 @@ def logout():
 @app.route("/products")
 def show_all_products():
 
-    search = request.args.get('q')
+    search = request.args.get('search')
+    page = request.args.get('page', 1, type=int)
 
     if not search:
-        products = ProductModel.query.all()
+        products = ProductModel.query.paginate(page=page, per_page=8)
     else:
         products = ProductModel.query.filter(
             ProductModel.title.ilike(f"%{search}%") |
             ProductModel.category.ilike(f"%{search}%")
-        ).all()
+        ).paginate(page=page, per_page=8)
 
     return render_template("products/list-products.html", products=products, categories=categories, search=search)
 
@@ -185,10 +186,12 @@ def show_product(id):
 @app.route("/products/categories/<category>")
 def show_products_by_category(category):
     """ Shows list of products by category """
+    
+    page = request.args.get('page', 1, type=int)
 
     category = deslugify(category)
     products = ProductModel.query.filter(
-        ProductModel.category == category).all()
+        ProductModel.category == category).paginate(page=page, per_page=8)
     categories = ProductModel.get_categories()
 
     return render_template("products/list-products.html", products=products, category=category, categories=categories)
