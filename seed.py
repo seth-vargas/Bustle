@@ -1,5 +1,5 @@
 from app import db
-from models import User, Product, cart_association, favorites_association
+from models import User, Product
 import requests
 import stripe
 from secrets import stripe_key
@@ -7,9 +7,6 @@ stripe.api_key = stripe_key
 
 
 db.drop_all()
-# breakpoint()
-print("Dropped tables")
-
 db.create_all()
 
 # Code to insert tables here:
@@ -49,6 +46,7 @@ for prod in products.data:
         id=str(prod.id),
         title=str(prod.name),
         image=str(prod.images[0]),
+        description=str(prod.description),
         price=int(prod.unit_amount / 100),
         category=str(prod.metadata.category),
         rating=float(prod.metadata.rating),

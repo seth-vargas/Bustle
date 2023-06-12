@@ -1,22 +1,30 @@
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
-
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-cart_association = db.Table(
-    "cart",
-    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
-    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
-)
+class Cart(db.Model):
+    __tablename__ = "cart"
 
-favorites_association = db.Table(
-    "favorites",
-    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
-    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
-)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"), primary_key=True)
+
+    product_id = db.Column(db.Text, db.ForeignKey(
+        "products.id", ondelete="CASCADE"), primary_key=True)
+
+
+class Favorites(db.Model):
+    __tablename__ = "favorites"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+
+    product_id = db.Column(db.Text, db.ForeignKey(
+        "products.id", ondelete="CASCADE"), unique=True)
 
 
 class User(db.Model):
@@ -34,9 +42,9 @@ class User(db.Model):
 
     password = db.Column(db.Text, nullable=False)
 
-    cart = db.relationship("Product", secondary=cart_association)
+    cart = db.relationship("Product", secondary="cart", lazy="immediate")
 
-    favorites = db.relationship("Product", secondary=favorites_association)
+    favorites = db.relationship("Product", secondary="favorites", lazy="immediate")
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -90,9 +98,11 @@ class Product(db.Model):
 
     id = db.Column(db.Text, primary_key=True,)
 
-    title = db.Column(db.Text)
+    title = db.Column(db.Text, nullable=False)
 
-    image = db.Column(db.Text)
+    image = db.Column(db.Text, nullable=False)
+    
+    description = db.Column(db.Text, nullable=False)
 
     price = db.Column(db.Integer, nullable=False, default=0)
 
@@ -101,9 +111,6 @@ class Product(db.Model):
     rating = db.Column(db.Float, nullable=False, default=0)
 
     rate_count = db.Column(db.Integer, nullable=False, default=0)
-
-    cart = db.relationship(
-        "User", secondary=cart_association, backref="products")
 
     @classmethod
     def get_categories(cls):

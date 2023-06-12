@@ -1,10 +1,9 @@
 import requests
-from secrets import secret_password, stripe_key
+from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
+from sqlalchemy.exc import IntegrityError
 from forms import AddUserForm, LoginForm, EditUserForm, ChangePasswordForm
 from models import db, connect_db, Product, User, deslugify
-# from models import db, connect_db, Product, User
-from sqlalchemy.exc import IntegrityError
-from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
+from secrets import secret_password, stripe_key
 import stripe
 
 
@@ -26,7 +25,6 @@ connect_db(app)
 
 stripe.api_key = stripe_key
 
-categories = Product.get_categories()
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -173,7 +171,7 @@ def show_all_products():
             Product.category.ilike(f"%{search}%")
         ).paginate(page=page, per_page=8)
 
-    return render_template("products/list-products.html", products=products, categories=categories, search=search)
+    return render_template("products/list-products.html", products=products, categories=Product.get_categories(), search=search)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -187,7 +185,7 @@ def show_product(id):
     similar_products = Product.query.filter(
         Product.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, similar_products=similar_products, categories=categories)
+    return render_template("products/product.html", product=product, similar_products=similar_products, categories=Product.get_categories())
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -203,7 +201,7 @@ def show_products_by_category(category):
         Product.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
     categories = Product.get_categories()
 
-    return render_template("products/list-products.html", products=products, category=category, categories=categories)
+    return render_template("products/list-products.html", products=products, category=category, categories=Product.get_categories())
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
