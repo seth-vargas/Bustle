@@ -12,7 +12,7 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone-db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone_db"
 
 app.config["SQLALCHEMY_ECHO"] = True
 

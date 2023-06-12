@@ -6,42 +6,37 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
+cart_association = db.Table(
+    "cart",
+    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
+    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
+)
+
+favorites_association = db.Table(
+    "favorites",
+    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
+    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
+)
+
+
 class User(db.Model):
     """ User Model """
 
     __tablename__ = "users"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-        autoincrement=True
-    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    first_name = db.Column(
-        db.Text,
-        nullable=False
-    )
+    first_name = db.Column(db.Text, nullable=False)
 
-    last_name = db.Column(
-        db.Text,
-        nullable=False
-    )
+    last_name = db.Column(db.Text, nullable=False)
 
-    email = db.Column(
-        db.Text,
-        nullable=False, unique=True
-    )
+    email = db.Column(db.Text, nullable=False, unique=True)
 
-    password = db.Column(
-        db.Text,
-        nullable=False
-    )
+    password = db.Column(db.Text, nullable=False)
 
-    cart = db.relationship(
-        "Product", secondary="cart")
+    cart = db.relationship("Product", secondary=cart_association)
 
-    favorites = db.relationship(
-        "Product", secondary="favorites")
+    favorites = db.relationship("Product", secondary=favorites_association)
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -49,12 +44,8 @@ class User(db.Model):
 
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
-        user = User(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=hashed_pwd,
-        )
+        user = User(first_name=first_name, last_name=last_name,
+                    email=email, password=hashed_pwd)
 
         db.session.add(user)
         return user
@@ -97,48 +88,22 @@ class Product(db.Model):
 
     __tablename__ = "products"
 
-    id = db.Column(
-        db.Text,
-        primary_key=True,
-    )
+    id = db.Column(db.Text, primary_key=True,)
 
-    title = db.Column(
-        db.Text
-    )
+    title = db.Column(db.Text)
 
-    description = db.Column(
-        db.Text
-    )
+    image = db.Column(db.Text)
 
-    image = db.Column(
-        db.Text
-    )
+    price = db.Column(db.Integer, nullable=False, default=0)
 
-    price = db.Column(
-        db.Integer,
-        nullable=False,
-        default=0
-    )
+    category = db.Column(db.Text, nullable=True)
 
-    category = db.Column(
-        db.Text,
-        nullable=True
-    )
+    rating = db.Column(db.Float, nullable=False, default=0)
 
-    rating = db.Column(
-        db.Float,
-        nullable=False,
-        default=0
-    )
-
-    rate_count = db.Column(
-        db.Integer,
-        nullable=False,
-        default=0
-    )
+    rate_count = db.Column(db.Integer, nullable=False, default=0)
 
     cart = db.relationship(
-        "User", secondary="cart")
+        "User", secondary=cart_association, backref="products")
 
     @classmethod
     def get_categories(cls):
@@ -155,28 +120,6 @@ class Product(db.Model):
         """ turns sloppy plain text into URL friendly route """
 
         return self.category.replace(" ", "-")
-
-
-class Cart(db.Model):
-    """ Cart table - connects products to users """
-
-    __tablename__ = "cart"
-
-    user_id = db.Column("user_id", db.ForeignKey(
-        "users.id", ondelete="CASCADE"), primary_key=True)
-    prod_id = db.Column("product_id", db.ForeignKey(
-        "products.id", ondelete="CASCADE"), primary_key=True)
-
-
-class Favorites(db.Model):
-    """ Favorites table - connects products to users """
-
-    __tablename__ = "favorites"
-
-    user_id = db.Column("user_id", db.ForeignKey(
-        "users.id", ondelete="CASCADE"), primary_key=True)
-    prod_id = db.Column("product_id", db.ForeignKey(
-        "products.id", ondelete="CASCADE"), primary_key=True)
 
 
 def deslugify(category):
