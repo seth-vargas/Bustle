@@ -1,7 +1,8 @@
 Capstone project dashboard!
 
 - - - - - - - - - - - - - - - - AGENDA - - - - - - - - - - - - - - - 
-[]  quantity
+[x]  adding to cart not working 
+[x]  quantity
 []  proposal
 []  pagination
 []  sort
@@ -26,6 +27,9 @@ HTML total prices update when adding to and removing from cart
 TODO : < sort >
 Sort by price, ratings, or unsorted
 
+TODO : < clean up app.js and app.py >
+They both could use some major refactoring later on
+
 TODO: < turn in >
 Setup Heroku and deploy
 
@@ -34,3 +38,8 @@ BUG  < wide images >
 Some product images are too wide for the card container. NOTE that
 this can be fixed by either going back to tall cards OR by making the
 cards themselves wider
+
+BUG < adding to cart not working >
+When a logged in user adds to their cart, they cannot increment or 
+decrement the item unless there is a page refresh. That needs to be 
+fixed ASAP as I cannot turn this in unitl that is a done deal!
