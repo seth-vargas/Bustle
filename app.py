@@ -1,7 +1,8 @@
 import requests
 from secrets import secret_password, stripe_key
 from forms import AddUserForm, LoginForm, EditUserForm, ChangePasswordForm
-from models import db, connect_db, ProductModel, User, deslugify
+from models import db, connect_db, Product, User, deslugify
+# from models import db, connect_db, Product, User
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
 import stripe
@@ -11,7 +12,9 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone1-stripe"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone-db"
+
+app.config["SQLALCHEMY_ECHO"] = True
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -19,11 +22,11 @@ app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
 app.config["SECRET_KEY"] = secret_password
 
-stripe.api_key = stripe_key
-
 connect_db(app)
 
-categories = ProductModel.get_categories()
+stripe.api_key = stripe_key
+
+categories = Product.get_categories()
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -163,11 +166,11 @@ def show_all_products():
     page = request.args.get('page', 1, type=int)
 
     if not search:
-        products = ProductModel.query.paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
+        products = Product.query.paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
     else:
-        products = ProductModel.query.filter(
-            ProductModel.title.ilike(f"%{search}%") |
-            ProductModel.category.ilike(f"%{search}%")
+        products = Product.query.filter(
+            Product.title.ilike(f"%{search}%") |
+            Product.category.ilike(f"%{search}%")
         ).paginate(page=page, per_page=8)
 
     return render_template("products/list-products.html", products=products, categories=categories, search=search)
@@ -179,10 +182,10 @@ def show_all_products():
 @app.route("/products/<id>")
 def show_product(id):
     """ Shows a product """
-    product = ProductModel.query.get_or_404(id)
+    product = Product.query.get_or_404(id)
 
-    similar_products = ProductModel.query.filter(
-        ProductModel.category.ilike(f"%{product.category}%")).all()
+    similar_products = Product.query.filter(
+        Product.category.ilike(f"%{product.category}%")).all()
 
     return render_template("products/product.html", product=product, similar_products=similar_products, categories=categories)
 
@@ -196,9 +199,9 @@ def show_products_by_category(category):
     page = request.args.get('page', 1, type=int)
 
     category = deslugify(category)
-    products = ProductModel.query.filter(
-        ProductModel.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
-    categories = ProductModel.get_categories()
+    products = Product.query.filter(
+        Product.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
+    categories = Product.get_categories()
 
     return render_template("products/list-products.html", products=products, category=category, categories=categories)
 
@@ -311,7 +314,7 @@ def cart():
             return render_template("cart.html", user=user, cart=cart)
 
         prod_id = request.get_json()["id"]
-        product = ProductModel.query.get_or_404(prod_id)
+        product = Product.query.get_or_404(prod_id)
 
         if request.method == "POST":
             session[f"qty_{prod_id}"] = 1
@@ -350,7 +353,7 @@ def remove_from_cart():
     user = User.query.get_or_404(g.user.id)
 
     prod_id = request.get_json()["id"]
-    product = ProductModel.query.get_or_404(prod_id)
+    product = Product.query.get_or_404(prod_id)
 
     user.cart.remove(product)
     db.session.commit()
@@ -378,7 +381,7 @@ def show_favorites():
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]
-        product = ProductModel.query.get_or_404(prod_id)
+        product = Product.query.get_or_404(prod_id)
 
         user.favorites.append(product)
         db.session.commit()
@@ -412,7 +415,7 @@ def delete_favorite():
     user = User.query.get_or_404(g.user.id)
 
     prod_id = request.get_json()["id"]
-    product = ProductModel.query.get_or_404(prod_id)
+    product = Product.query.get_or_404(prod_id)
 
     user.favorites.remove(product)
     db.session.commit()

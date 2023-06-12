@@ -6,37 +6,6 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-def connect_db(app):
-    """ initializes db in app """
-
-    db.app = app
-    db.init_app(app)
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-cart_association = db.Table(
-    "cart",
-    db.Column("user_id", db.ForeignKey("users.id")),
-    db.Column("product_id", db.ForeignKey("products.id"))
-)
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-favorites_association = db.Table(
-    "favorites",
-    db.Column("user_id", db.ForeignKey("users.id")),
-    db.Column("product_id", db.ForeignKey("products.id"))
-)
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
 class User(db.Model):
     """ User Model """
 
@@ -69,10 +38,10 @@ class User(db.Model):
     )
 
     cart = db.relationship(
-        "ProductModel", secondary=cart_association)
-    
+        "Product", secondary="cart")
+
     favorites = db.relationship(
-        "ProductModel", secondary=favorites_association)
+        "Product", secondary="favorites")
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -107,26 +76,23 @@ class User(db.Model):
                 return user
 
         return False
-    
+
     @classmethod
     def change_password(cls, email, password):
         """ Hashes new password and updates user in system """
-        
+
         user = cls.query.filter_by(email=email).first()
-        new_hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+        new_hashed_pwd = bcrypt.generate_password_hash(
+            password).decode('UTF-8')
         user.password = new_hashed_pwd
-        
+
         return user
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-class ProductModel(db.Model):
+class Product(db.Model):
     """ Product Model """
 
     __tablename__ = "products"
@@ -135,15 +101,19 @@ class ProductModel(db.Model):
         db.Text,
         primary_key=True,
     )
-    
+
     title = db.Column(
         db.Text
     )
-    
+
+    description = db.Column(
+        db.Text
+    )
+
     image = db.Column(
         db.Text
     )
-    
+
     price = db.Column(
         db.Integer,
         nullable=False,
@@ -168,25 +138,55 @@ class ProductModel(db.Model):
     )
 
     cart = db.relationship(
-        "User", secondary=cart_association, backref="products")
-    
+        "User", secondary="cart")
+
     @classmethod
     def get_categories(cls):
         """ returns categories as a list """
-        
+
         categories = set()
-        
+
         for prod in cls.query.all():
             categories.add(prod.category)
-            
+
         return categories
-    
+
     def slugify(self):
         """ turns sloppy plain text into URL friendly route """
-        
+
         return self.category.replace(" ", "-")
+
+
+class Cart(db.Model):
+    """ Cart table - connects products to users """
+
+    __tablename__ = "cart"
+
+    user_id = db.Column("user_id", db.ForeignKey(
+        "users.id", ondelete="CASCADE"), primary_key=True)
+    prod_id = db.Column("product_id", db.ForeignKey(
+        "products.id", ondelete="CASCADE"), primary_key=True)
+
+
+class Favorites(db.Model):
+    """ Favorites table - connects products to users """
+
+    __tablename__ = "favorites"
+
+    user_id = db.Column("user_id", db.ForeignKey(
+        "users.id", ondelete="CASCADE"), primary_key=True)
+    prod_id = db.Column("product_id", db.ForeignKey(
+        "products.id", ondelete="CASCADE"), primary_key=True)
+
 
 def deslugify(category):
     """ turns URL friendly route into sloppy plain text """
-    
+
     return category.replace("-", " ")
+
+
+def connect_db(app):
+    """ initializes db in app """
+
+    db.app = app
+    db.init_app(app)
