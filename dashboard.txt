@@ -2,7 +2,7 @@ Capstone project dashboard!
 
 - - - - - - - - - - - - - - - - AGENDA - - - - - - - - - - - - - - - 
 []  proposal
-[]  pagination
+[x]  pagination
 []  sort
 []  wide images
 []  update total in DOM
@@ -30,6 +30,9 @@ Sort by price, ratings, or unsorted
 
 < clean up app.js and app.py >
 They both could use some major refactoring later on
+
+< routes to url_for() >
+Change all hard-coded routes in HTML files to url_for() 
 
 < turn in >
 Setup Heroku and deploy

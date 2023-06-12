@@ -81,7 +81,7 @@ async function addToCart(e) {
             <i class="fa-solid fa-minus"></i>
         </button>
 
-        <small><span id="qty-${this.dataset.id}">${response["data"]["qty"]}</span>in cart</small>
+        <small><span id="qty-${this.dataset.id}">${response["data"]["qty"]} </span>in cart</small>
 
         <button class="btn btn-light increment" data-id="${this.dataset.id}" data-func="updateCart"
             data-role="increment">
@@ -118,7 +118,7 @@ async function updateCart() {
     return postData("/cart/delete", { id: this.dataset.id }, "DELETE");
   } else {
     const qty = document.querySelector(`#qty-${this.dataset.id}`);
-    qty.innerText = response["data"]["qty"];
+    qty.innerText = `${response["data"]["qty"]} `;
   }
 }
 

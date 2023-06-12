@@ -12,18 +12,22 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone1-stripe"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+
 app.config["SECRET_KEY"] = secret_password
+
 stripe.api_key = stripe_key
 
 connect_db(app)
 
 categories = ProductModel.get_categories()
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Error Routes: not found, server error, client errors
-# TODO : Error routes
+
 @app.errorhandler(404)
 def not_found(error):
     """ Handles 404 errors """
@@ -149,6 +153,8 @@ def logout():
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+MAX_ITEMS_PER_PAGE = 6
+
 # General routes for app
 @app.route("/products")
 def show_all_products():
@@ -157,7 +163,7 @@ def show_all_products():
     page = request.args.get('page', 1, type=int)
 
     if not search:
-        products = ProductModel.query.paginate(page=page, per_page=8)
+        products = ProductModel.query.paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
     else:
         products = ProductModel.query.filter(
             ProductModel.title.ilike(f"%{search}%") |
@@ -186,12 +192,12 @@ def show_product(id):
 @app.route("/products/categories/<category>")
 def show_products_by_category(category):
     """ Shows list of products by category """
-    
+
     page = request.args.get('page', 1, type=int)
 
     category = deslugify(category)
     products = ProductModel.query.filter(
-        ProductModel.category == category).paginate(page=page, per_page=8)
+        ProductModel.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
     categories = ProductModel.get_categories()
 
     return render_template("products/list-products.html", products=products, category=category, categories=categories)
@@ -304,11 +310,9 @@ def cart():
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
 
-        # breakpoint()
-        
         prod_id = request.get_json()["id"]
         product = ProductModel.query.get_or_404(prod_id)
-        
+
         if request.method == "POST":
             session[f"qty_{prod_id}"] = 1
 
@@ -321,19 +325,19 @@ def cart():
                 "qty": session.get(f"qty_{prod_id}")
             }
 
-        elif request.method == "PATCH": 
-            
+        elif request.method == "PATCH":
+
             if request.get_json()["role"] == "increment":
                 session[f"qty_{prod_id}"] += 1
             else:
                 session[f"qty_{prod_id}"] -= 1
-                
+
             data = {
                 "message": f"Added {product.title} to cart.",
                 "method": f"{request.method}",
                 "qty": session.get(f"qty_{prod_id}")
             }
-            
+
         return jsonify({"data": data})
 
 
