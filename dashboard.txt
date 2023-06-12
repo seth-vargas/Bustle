@@ -1,7 +1,7 @@
 Capstone project dashboard!
 
 - - - - - - - - - - - - - - - - AGENDA - - - - - - - - - - - - - - - 
-[]  proposal
+[x]  proposal
 [x]  pagination
 []  sort
 []  wide images
