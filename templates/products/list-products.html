@@ -76,25 +76,25 @@
                     </div>
                 </div>
 
-                {% if product in g.user.cart %}
-                <div class="d-flex justify-content-evenly align-items-center">
-                    <form action="/cart" method="PATCH" class="decrement" data-id="{{ product.id }}">
-                        <button class="btn btn-danger" data-id="{{ product.id }}"><i
-                                class="fa-solid fa-minus"></i></button>
-                    </form>
-                    {% with quantity = session["qty_" + product.id] %}
-                    <small><span class="quantity">{{ quantity }}</span> in cart</small>
-                    <form action="/cart" method="PATCH" class="increment" data-id="{{ product.id }}">
-                        <button class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
-                    </form>
-                    {% endwith %}
+                {% with quantity = session["qty_" + product.id] %}
+                {% if product in g.user.cart and quantity != 0 %}
+                <div class="d-flex justify-content-evenly align-items-center my-2">
+                    <button class="btn btn-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
+                        data-role="decrement">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+
+                    <small><span id="qty-{{ product.id }}">{{ quantity }}</span>in cart</small>
+
+                    <button class="btn btn-light increment" data-id="{{ product.id }}" data-func="updateCart"
+                        data-role="increment">
+                        <i class="fa-solid fa-plus"></i></button>
                 </div>
                 {% else %}
-                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post"
-                    data-instructions="post">
+                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post">
                     <button class="btn btn-outline-dark">Add to cart</button>
-                    {% endif %}
                 </form>
+                {% endif %}
 
                 <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="{{ product.id }}"
                     method="post" data-instructions="post">
@@ -103,6 +103,7 @@
                     {% else %}
                     <button class="btn btn-outline-dark">Add to favorites</button>
                     {% endif %}
+                    {% endwith %}
                 </form>
             </div>
             {%endfor%}

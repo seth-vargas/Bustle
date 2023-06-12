@@ -292,7 +292,7 @@ def cart():
             "message": "Please log in to interact with your shopping cart",
             "class": "danger"
         }
-        return jsonify({"response": data})
+        return jsonify({"data": data})
 
     else:
         user = User.query.get_or_404(g.user.id)
@@ -301,6 +301,8 @@ def cart():
             cart = user.cart
             return render_template("cart.html", user=user, cart=cart)
 
+        # breakpoint()
+        
         prod_id = request.get_json()["id"]
         product = ProductModel.query.get_or_404(prod_id)
         
@@ -317,15 +319,19 @@ def cart():
             }
 
         elif request.method == "PATCH": 
-            session[f"qty_{prod_id}"] += 1
             
+            if request.get_json()["role"] == "increment":
+                session[f"qty_{prod_id}"] += 1
+            else:
+                session[f"qty_{prod_id}"] -= 1
+                
             data = {
                 "message": f"Added {product.title} to cart.",
                 "method": f"{request.method}",
                 "qty": session.get(f"qty_{prod_id}")
             }
             
-        return jsonify({"response": data})
+        return jsonify({"data": data})
 
 
 @app.route("/cart/delete", methods=["DELETE"])
@@ -347,7 +353,7 @@ def remove_from_cart():
         "method": f"{request.method}"
     }
 
-    return jsonify({"response": data})
+    return jsonify({"data": data})
 
 
 @app.route("/favorites", methods=["GET", "POST"])
@@ -359,7 +365,7 @@ def show_favorites():
             "message": "Please log in to interact with your favorites list",
             "class": "danger"
         }
-        return jsonify({"response": data})
+        return jsonify({"data": data})
 
     user = User.query.get_or_404(g.user.id)
 
@@ -375,7 +381,7 @@ def show_favorites():
             "method": f"{request.method}"
         }
 
-        return jsonify({"response": data})
+        return jsonify({"data": data})
 
     elif request.method == "GET":
         favorites = user.favorites
@@ -409,7 +415,7 @@ def delete_favorite():
         "method": f"{request.method}"
     }
 
-    return jsonify({"response": data})
+    return jsonify({"data": data})
 
 
 # TODO : Checkout
