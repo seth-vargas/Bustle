@@ -5,26 +5,17 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-class Cart(db.Model):
-    __tablename__ = "cart"
+cart = db.Table(
+    "cart",
+    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
+    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
+)
 
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id", ondelete="CASCADE"), primary_key=True)
-
-    product_id = db.Column(db.Text, db.ForeignKey(
-        "products.id", ondelete="CASCADE"), primary_key=True)
-
-
-class Favorites(db.Model):
-    __tablename__ = "favorites"
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id", ondelete="CASCADE"))
-
-    product_id = db.Column(db.Text, db.ForeignKey(
-        "products.id", ondelete="CASCADE"), unique=True)
+favorites = db.Table(
+    "favorites",
+    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
+    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
+)
 
 
 class User(db.Model):
