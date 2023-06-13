@@ -73,7 +73,9 @@ endif %}{% endblock %}
             <div class="col">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <img src="{{ product.image }}" class="card-img-top mx-auto d-block object-fit-contain border rounded">
+                        <img src="{{ product.image }}"
+                            class="card-img-top mx-auto d-block object-fit-contain border rounded"
+                            style="height: 20rem">
                         <p class="card-text">{{ product.title }}</p>
                         <a href="/products/{{ product.id }}" class="stretched-link"></a>
                         <h5 class="card-title">
@@ -119,17 +121,24 @@ endif %}{% endblock %}
             </div>
             {%endfor%}
         </div>
-        {% for page_num in products.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-        {% if page_num %}
-        {% if products.page == page_num %}
-        <a href="{{ url_for('show_all_products', page=page_num) }}" class="btn btn-info mb-4">{{ page_num }}</a>
-        {% else %}
-        <a href="{{ url_for('show_all_products', page=page_num) }}" class="btn btn-outline-info mb-4">{{ page_num }}</a>
-        {% endif %}
-        {% else %}
-        ...
-        {% endif %}
-        {%endfor%}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% for page_num in products.iter_pages() %}
+                {% if products.page == page_num %}
+                <li class="page-item disabled">
+                    <a href="{{ url_for('show_all_products', page=page_num) }}" class="page-link">{{
+                        page_num }}</a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a href="{{ url_for('show_all_products', page=page_num) }}" class="page-link">
+                        {{ page_num}}
+                    </a>
+                </li>
+                {% endif %}
+                {%endfor%}
+            </ul>
+        </nav>
     </div>
 </div>
 
