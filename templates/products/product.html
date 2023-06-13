@@ -77,9 +77,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="row overflow-x-auto">
+            <div class="d-flex overflow-x-auto">
                 {% for product in similar_products %}
-                <div class="col">
+                <div class="col-3 me-3">
                     <div class="card bg-light">
                         <div class="card-body">
                             <img src="{{ product.image }}" class="card-img-top mx-auto d-block" style="height: 10rem; width: auto">
