@@ -73,8 +73,7 @@ endif %}{% endblock %}
             <div class="col">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <img src="{{ product.image }}" class="card-img-top mx-auto d-block"
-                            style="height: auto; max-width:75%">
+                        <img src="{{ product.image }}" class="card-img-top mx-auto d-block object-fit-contain border rounded">
                         <p class="card-text">{{ product.title }}</p>
                         <a href="/products/{{ product.id }}" class="stretched-link"></a>
                         <h5 class="card-title">

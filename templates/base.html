@@ -52,6 +52,7 @@
                 <a href="/products/categories/{{ category }}" class="btn btn-secondary btn-sm">{{category }}</a>
                 {% endfor %}
             </span>
+            {% if g.user %}
             <span>
                 <div class="dropstart my-auto">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2"
@@ -69,6 +70,7 @@
                     </ul>
                 </div>
             </span>
+            {% endif %}
         </div>
     </nav>
 
