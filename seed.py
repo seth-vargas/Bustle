@@ -1,8 +1,8 @@
 from app import db
-from models import User, Product
+from general.models import User, Product
 import requests
 import stripe
-from secrets import stripe_key
+from general.secrets import stripe_key
 stripe.api_key = stripe_key
 
 

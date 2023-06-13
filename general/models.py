@@ -35,6 +35,8 @@ class User(db.Model):
 
     num_items_in_cart = db.Column(db.Integer, nullable=False, default=0)
     
+    cart_total_price = db.Column(db.Float, nullable=False, default=0)
+    
     cart = db.relationship("Product", secondary="cart", lazy="immediate")
 
     favorites = db.relationship("Product", secondary="favorites", lazy="immediate")
