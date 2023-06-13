@@ -17,8 +17,8 @@
         <div class="container-fluid">
             <a class="navbar-brand ms-5" href="/products">Bustle</a>
             <form class="d-flex w-25" action="/products">
-                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search" name="search"
-                    {% if search %} value="{{ search }} {% endif %}">
+                <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search"
+                    name="search" {% if search %} value="{{ search }} {% endif %}">
             </form>
             {% if g.user %}
             <div class="dropstart me-5">
@@ -57,7 +57,7 @@
             {% endfor %}
         </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container container-fluid">
         <div class="row">
             <div id="flashed-messages">
                 {% for category, message in get_flashed_messages(with_categories=True) %}
@@ -69,7 +69,13 @@
             </div>
         </div>
         <div class="row">
-            {% block content %}{% endblock %}
+            <div class="d-flex align-items-center" id="loader">
+                <strong>Loading...</strong>
+                <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+            </div>
+            <div id="content" class="visually-hidden">
+                {% block content %}{% endblock %}
+            </div>
         </div>
     </div>
 

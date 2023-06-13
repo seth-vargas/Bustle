@@ -1,5 +1,12 @@
 // - - - - - - - - - - - - - - - - - - - - - - -  DOM manipulation - - - - - - - - - - - - - - - - - - - - - - -
 
+addEventListener("load", (event) => {
+    const content = document.getElementById("content")
+    const loader = document.getElementById("loader")
+    content.removeAttribute("class")
+    loader.setAttribute("class", "visually-hidden")
+});
+
 $(document).on("click", ".add-to-cart", addToCart);
 $(document).on("click", ".add-to-favorites", addToFavorites);
 $(document).on("click", ".remove-from-favorites", removeFromFavorites);
