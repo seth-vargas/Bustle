@@ -79,6 +79,11 @@ async function addToCart(e) {
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
   const data = response["data"];
 
+  console.log(data)
+
+  const cartBubble = document.querySelector("#cart-count")
+  cartBubble.innerText = data["count_products_in_cart"]
+
   if (!isUserLoggedIn(data)) return;
 
   this.outerHTML = `
@@ -97,13 +102,6 @@ async function addToCart(e) {
     `;
 }
 
-async function removeFromCart() {
-  await postData("/cart/delete", { id: this.dataset.id }, "delete");
-  this.closest(".row").remove();
-  const total = document.querySelector("#total");
-  total.innerText = parseInt(total.innerText) - this.dataset.price;
-}
-
 /* Gets ran when the user increments / decrements their cart */
 
 async function updateCart() {
@@ -113,7 +111,14 @@ async function updateCart() {
     role: this.dataset.role,
   });
 
-  const isZero = response["data"]["qty"] <= 0 ? true : false;
+  const data = response["data"]
+
+  console.log(data)
+
+  const cartBubble = document.querySelector("#cart-count")
+  cartBubble.innerText = data["count_products_in_cart"]
+
+  const isZero = data["qty"] <= 0 ? true : false;
 
   if (isZero) {
     this.parentElement.outerHTML = `
@@ -125,8 +130,15 @@ async function updateCart() {
     return postData("/cart/delete", { id: this.dataset.id }, "DELETE");
   } else {
     const qty = document.querySelector(`#qty-${this.dataset.id}`);
-    qty.innerText = `${response["data"]["qty"]} `;
+    qty.innerText = `${data["qty"]} `;
   }
+}
+
+async function removeFromCart() {
+  await postData("/cart/delete", { id: this.dataset.id }, "delete");
+  this.closest(".row").remove();
+  const total = document.querySelector("#total");
+  total.innerText = parseInt(total.innerText) - this.dataset.price;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with favorites - - - - - - - - - - - - - - - - - - - - - - -

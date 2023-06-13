@@ -33,6 +33,8 @@ class User(db.Model):
 
     password = db.Column(db.Text, nullable=False)
 
+    num_items_in_cart = db.Column(db.Integer, nullable=False, default=0)
+    
     cart = db.relationship("Product", secondary="cart", lazy="immediate")
 
     favorites = db.relationship("Product", secondary="favorites", lazy="immediate")

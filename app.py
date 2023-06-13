@@ -316,28 +316,29 @@ def cart():
 
         if request.method == "POST":
             session[f"qty_{prod_id}"] = 1
+            user.num_items_in_cart += 1
 
+            db.session.add(user)
             user.cart.append(product)
-            db.session.commit()
-
-            data = {
-                "message": f"Added {product.title} to cart.",
-                "method": f"{request.method}",
-                "qty": session.get(f"qty_{prod_id}")
-            }
 
         elif request.method == "PATCH":
-
             if request.get_json()["role"] == "increment":
                 session[f"qty_{prod_id}"] += 1
+                user.num_items_in_cart += 1
+                
             else:
                 session[f"qty_{prod_id}"] -= 1
-
-            data = {
-                "message": f"Added {product.title} to cart.",
-                "method": f"{request.method}",
-                "qty": session.get(f"qty_{prod_id}")
-            }
+                user.num_items_in_cart -= 1
+                
+        db.session.add(user)
+        db.session.commit()
+        
+        data = {
+            "message": f"Added {product.title} to cart.",
+            "method": f"{request.method}",
+            "qty": session.get(f"qty_{prod_id}"),
+            "count_products_in_cart": user.num_items_in_cart
+        }
 
         return jsonify({"data": data})
 
