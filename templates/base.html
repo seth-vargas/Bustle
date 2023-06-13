@@ -13,36 +13,31 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center " data-bs-theme="light">
-        <div class="container-fluid">
-            <a class="navbar-brand ms-5" href="/products">Bustle</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center py-3" data-bs-theme="light">
+        <div class="container">
+            <a class="navbar-brand" href="/products">Bustle</a>
             <form class="d-flex w-25" action="/products">
                 <input class="form-control rounded-pill" type="search" placeholder="Search" aria-label="Search"
                     name="search" {% if search %} value="{{ search }} {% endif %}">
             </form>
             {% if g.user %}
-            <div class="dropstart me-5">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Hi, {{ g.user.first_name }}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                    <li><a class="dropdown-item" href="/my-account">See my account</a></li>
-                    <li><a class="dropdown-item" href="/cart">See my cart</a></li>
-                    <li><a class="dropdown-item" href="/favorites">See my favorites</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="/logout">Log out</a></li>
-                </ul>
+            <div class="d-flex flex-row">
+                <a type="button" class="btn btn-outline-primary position-relative" href="/cart">
+                    Cart
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="cart-count">
+                        {{ g.user.num_items_in_cart }}
+                        <span class="visually-hidden">users cart</span>
+                    </span>
+                </a>
             </div>
 
             {% else %}
-            <ul class="nav navbar-nav navbar-right me-5">
-                <li class="mx-1">
+            <ul class="nav navbar-right">
+                <li>
                     <a href="/login" class="btn btn-outline-light">Log in</a>
                 </li>
-                <li class="mx-1">
+                <li>
                     <a href="/signup" class="btn btn-success">Sign up</a>
                 </li>
                 {% endif %}
@@ -50,13 +45,33 @@
         </div>
     </nav>
     <nav class="navbar navbar-dark bg-secondary">
-        <div class="container-fluid justify-content-start">
-            <b class="text-light mx-5">Categories</b>
-            {% for category in categories %}
-            <a href="/products/categories/{{ category }}" class="btn btn-secondary btn-sm">{{category }}</a>
-            {% endfor %}
+        <div class="container">
+            <span>
+                <b class="text-light">Categories</b>
+                {% for category in categories %}
+                <a href="/products/categories/{{ category }}" class="btn btn-secondary btn-sm">{{category }}</a>
+                {% endfor %}
+            </span>
+            <span>
+                <div class="dropstart my-auto">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Hi, {{ g.user.first_name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                        <li><a class="dropdown-item" href="/my-account">See my account</a></li>
+                        <li><a class="dropdown-item" href="/cart">See my cart</a></li>
+                        <li><a class="dropdown-item" href="/favorites">See my favorites</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="/logout">Log out</a></li>
+                    </ul>
+                </div>
+            </span>
         </div>
     </nav>
+
     <div class="container container-fluid">
         <div class="row">
             <div id="flashed-messages">
@@ -68,12 +83,11 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="row">
-            <div class="d-flex align-items-center" id="loader">
-                <strong>Loading...</strong>
-                <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-            </div>
+
+        <div class="d-flex align-items-center" id="loader">
+            <div class="spinner-border mx-auto my-5" role="status" aria-hidden="true"></div>
         </div>
+
         <div class="row">
             <div id="content" class="visually-hidden">
                 {% block content %}{% endblock %}
