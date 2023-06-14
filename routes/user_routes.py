@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, flash, session, g, request, 
 from sqlalchemy.exc import IntegrityError
 from general.forms import EditUserForm, ChangePasswordForm
 from general.models import Product, User
-from app import app
+from app import app, db
 
 
 @app.route("/my-account")

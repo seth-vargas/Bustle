@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
 from sqlalchemy.exc import IntegrityError
 from general.models import Product, deslugify
-from app import app
+from app import app, db
 
 
 MAX_ITEMS_PER_PAGE = 6
