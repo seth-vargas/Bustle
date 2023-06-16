@@ -79,12 +79,11 @@ async function addToCart(e) {
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
   const data = response["data"];
 
-  console.log(data)
-
   const cartBubble = document.querySelector("#cart-count")
-  cartBubble.innerText = data["count_products_in_cart"]
-
+  
   if (!isUserLoggedIn(data)) return;
+
+  cartBubble.innerText = data["count_products_in_cart"]
 
   this.outerHTML = `
     <div class="d-flex justify-content-evenly align-items-center my-2">
@@ -112,8 +111,6 @@ async function updateCart() {
   });
 
   const data = response["data"]
-
-  console.log(data)
 
   const cartBubble = document.querySelector("#cart-count")
   cartBubble.innerText = data["count_products_in_cart"]
