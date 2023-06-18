@@ -10,14 +10,16 @@
 </div>
 <div class="row">
     <ul>
-        {% for cart_instance in cart %}
-        {% with product = Product.query.get(cart_instance.prod_id) %}
+
+        {% for product in cart %}
+
         <div class="row m-3">
+
             <div class="d-flex justify-content-between align-items-center">
+
                 <div>
                     <span style="cursor: pointer;">
-                        <i class="fa-solid fa-xmark me-4 remove-from-cart" data-id="{{ product.id }}"
-                            data-price="{{ product.price }}"></i>
+                        <i class="fa-solid fa-xmark me-4 remove-from-cart" data-id="{{ product.id }}" data-price="{{ product.price }}"></i>
                     </span>
                     <img src="{{product.image}}" style="height:100px;">
                     <small class="mx-5">{{product.title}}</small>
@@ -28,12 +30,12 @@
             </div>
 
         </div>
-        {% endwith %}
+
         {% endfor %}
 
     </ul>
     <div class="row">
-        {% with sum = cart | sum(attribute="price") %}
+        {% with  sum = cart | sum(attribute="price") %}
         <h2>Total: <span id="total" data-sum="{{ sum }}">{{ "$%.2f" | format(sum) }}</span></h2>
         {% endwith %}
     </div>

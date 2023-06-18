@@ -1,7 +1,6 @@
-from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
-from sqlalchemy.exc import IntegrityError
+from flask import render_template, g, request
 from general.models import Product, Cart, deslugify, get_categories
-from app import app, db
+from app import app
 
 
 MAX_ITEMS_PER_PAGE = 6
@@ -12,6 +11,11 @@ def show_all_products():
 
     search = request.args.get('search')
     page = request.args.get('page', 1, type=int)
+    # cart = Cart.query.filter(Cart.user_id == g.user.id).all()
+    items_in_cart = Cart.query.filter(Cart.user_id == g.user.id).all()
+    cart = []
+    for item in items_in_cart:
+        cart.append(Product.query.get(item.prod_id))
 
     if not search:
         products = Product.query.paginate(
@@ -20,11 +24,7 @@ def show_all_products():
         products = Product.query.filter(
             Product.title.ilike(f"%{search}%") |
             Product.category.ilike(f"%{search}%")
-        ).paginate(page=page, per_page=8)
-
-    cart = Cart.query.filter(Cart.user_id == g.user.id).all()
-
-    breakpoint()
+        ).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
 
     return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, cart=cart)
 

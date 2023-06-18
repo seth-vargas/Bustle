@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
+from flask import render_template, redirect, flash, session, g, request, jsonify, sessions
 from sqlalchemy.exc import IntegrityError
 from general.forms import EditUserForm, ChangePasswordForm
 from general.models import Product, User, Cart
@@ -107,14 +107,12 @@ def cart():
         user = User.query.get_or_404(g.user.id)
 
         if request.method == "GET":
-            
-            users_cart = Cart.query.filter(Cart.user_id == user.id).all() # [<Cart 7>, <Cart 8>]
+            items_in_cart = Cart.query.filter(Cart.user_id == user.id).all()
+            cart = []
+            for item in items_in_cart:
+                cart.append(Product.query.get(item.prod_id))
 
-            breakpoint()
-
-            breakpoint()
-
-            return render_template("cart.html", user=user, cart=users_cart)
+            return render_template("cart.html", user=user, cart=cart)
 
         prod_id = request.get_json()["id"]
         product = Product.query.get_or_404(prod_id)
@@ -158,17 +156,15 @@ def remove_from_cart():
         flash("Please log in to interact with your shopping cart", "danger")
         return redirect("/login")
 
-    user = User.query.get_or_404(g.user.id)
-
     prod_id = request.get_json()["id"]
-    product = Product.query.get_or_404(prod_id)
+    cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
 
-    user.cart.remove(product)
+    db.session.delete(cart_instance)
     db.session.commit()
 
     data = {
-        "message": f"Removed {product.title} from cart.",
-        "method": f"{request.method}"
+        "message": f"Removed {cart_instance} from cart.",
+        "method": f"{request.method}",
     }
 
     return jsonify({"data": data})
