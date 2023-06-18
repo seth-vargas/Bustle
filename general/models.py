@@ -37,9 +37,9 @@ class User(db.Model):
     
     cart_total_price = db.Column(db.Float, nullable=False, default=0)
     
-    cart = db.relationship("Product", secondary="cart", lazy="immediate")
+    cart = db.relationship("Product", secondary="cart", lazy="joined")
 
-    favorites = db.relationship("Product", secondary="favorites", lazy="immediate")
+    favorites = db.relationship("Product", secondary="favorites", lazy="joined")
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
