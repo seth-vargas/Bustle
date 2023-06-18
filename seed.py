@@ -55,7 +55,8 @@ for prod in products.data:
     
 
     
-user = User.signup("seth", "vargas", "sv@gmail.com", "Password")
+user1 = User.signup("seth", "vargas", "sv@gmail.com", "Password")
+user2 = User.signup("kaitlyn", "vargas", "kv@gmail.com", "Password")
 
-db.session.add(user)
+db.session.add_all([user1, user2])
 db.session.commit()
