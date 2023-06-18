@@ -32,21 +32,13 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
     first_name = db.Column(db.Text, nullable=False)
-
     last_name = db.Column(db.Text, nullable=False)
-
     email = db.Column(db.Text, nullable=False, unique=True)
-
     password = db.Column(db.Text, nullable=False)
-
     num_items_in_cart = db.Column(db.Integer, nullable=False, default=0)
-    
     cart_total_price = db.Column(db.Float, nullable=False, default=0)
-    
-    cart = db.relationship("Product", secondary="cart", lazy="joined")
-
+    # cart = db.relationship("Product", secondary="cart", lazy="joined")
     favorites = db.relationship("Product", secondary="favorites", lazy="joined")
 
     @classmethod
@@ -99,22 +91,14 @@ class Product(db.Model):
 
     __tablename__ = "products"
 
-    id = db.Column(db.Text, primary_key=True,)
-
+    id = db.Column(db.Text, primary_key=True)
     title = db.Column(db.Text, nullable=False)
-
     image = db.Column(db.Text, nullable=False)
-    
     description = db.Column(db.Text, nullable=False)
-
     price = db.Column(db.Integer, nullable=False, default=0)
-
     category = db.Column(db.Text, nullable=True)
-
     rating = db.Column(db.Float, nullable=False, default=0)
-
     rate_count = db.Column(db.Integer, nullable=False, default=0)
-
  
 
     def slugify(self):

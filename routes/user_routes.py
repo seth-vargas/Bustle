@@ -112,6 +112,8 @@ def cart():
 
             breakpoint()
 
+            breakpoint()
+
             return render_template("cart.html", user=user, cart=users_cart)
 
         prod_id = request.get_json()["id"]
@@ -122,9 +124,9 @@ def cart():
             user.num_items_in_cart += 1
             message_verb = "Added"
 
-            db.session.add(user)
-            user.cart.append(product)
-
+            db.session.add(Cart(user_id=user.id, prod_id=prod_id))
+            db.session.commit()
+            
         elif request.method == "PATCH":
 
             if request.get_json()["role"] == "increment":

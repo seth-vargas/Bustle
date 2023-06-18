@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
 from sqlalchemy.exc import IntegrityError
-from general.models import Product, deslugify
+from general.models import Product, Cart, deslugify, get_categories
 from app import app, db
 
 
@@ -22,7 +22,11 @@ def show_all_products():
             Product.category.ilike(f"%{search}%")
         ).paginate(page=page, per_page=8)
 
-    return render_template("products/list-products.html", products=products, categories=Product.get_categories(), search=search)
+    cart = Cart.query.filter(Cart.user_id == g.user.id).all()
+
+    breakpoint()
+
+    return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, cart=cart)
 
 
 @app.route("/products/<id>")
@@ -33,7 +37,7 @@ def show_product(id):
     similar_products = Product.query.filter(
         Product.category.ilike(f"%{product.category}%")).all()
 
-    return render_template("products/product.html", product=product, similar_products=similar_products, categories=Product.get_categories())
+    return render_template("products/product.html", product=product, similar_products=similar_products, categories=get_categories())
 
 
 @app.route("/products/categories/<category>")
@@ -45,7 +49,6 @@ def show_products_by_category(category):
     category = deslugify(category)
     products = Product.query.filter(
         Product.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
-    categories = Product.get_categories()
 
-    return render_template("products/list-products.html", products=products, category=category, categories=Product.get_categories())
+    return render_template("products/list-products.html", products=products, category=category, categories=get_categories())
 
