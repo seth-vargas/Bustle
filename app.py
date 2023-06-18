@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, flash, session, g, request, 
 import stripe
 from general.secrets import secret_password, stripe_key
 from general.models import db, connect_db, User
+from general.forms import LoginForm, AddUserForm
 
 
 CURR_USER_KEY = "curr_user"
