@@ -5,13 +5,21 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-cart = db.Table(
-    "cart",
-    db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
-    db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
-)
+# cart_table = db.Table(
+#     "cart",
+#     db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
+#     db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
+# )
+class Cart(db.Model):
+    """ Cart model """
 
-favorites = db.Table(
+    __tablename__ = "cart"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    prod_id = db.Column(db.Text, db.ForeignKey("products.id", ondelete="CASCADE"))
+
+favorites_table = db.Table(
     "favorites",
     db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
     db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
@@ -107,22 +115,22 @@ class Product(db.Model):
 
     rate_count = db.Column(db.Integer, nullable=False, default=0)
 
-    @classmethod
-    def get_categories(cls):
-        """ returns categories as a list """
-
-        categories = set()
-
-        for prod in cls.query.all():
-            categories.add(prod.category)
-
-        return categories
+ 
 
     def slugify(self):
         """ turns sloppy plain text into URL friendly route """
 
         return self.category.replace(" ", "-")
 
+def get_categories():
+    """ returns categories as a list """
+
+    categories = set()
+
+    for prod in Product.query.all():
+        categories.add(prod.category)
+
+    return categories
 
 def deslugify(category):
     """ turns URL friendly route into sloppy plain text """
