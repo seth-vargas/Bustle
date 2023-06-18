@@ -124,16 +124,18 @@ def cart():
             if request.get_json()["role"] == "increment":
                 session[f"qty_{prod_id}"] += 1
                 user.num_items_in_cart += 1
+                message_verb = "Added"
 
             else:
                 session[f"qty_{prod_id}"] -= 1
                 user.num_items_in_cart -= 1
+                message_verb = "Removed"
 
         db.session.add(user)
         db.session.commit()
 
         data = {
-            "message": f"Added {product.title} to cart.",
+            "message": f"{message_verb} {product.title}.",
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
             "count_products_in_cart": user.num_items_in_cart
