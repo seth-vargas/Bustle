@@ -87,14 +87,14 @@ async function addToCart(e) {
 
   this.outerHTML = `
     <div class="d-flex justify-content-evenly align-items-center my-2">
-        <button class="btn btn-danger decrement" data-id="${this.dataset.id}" data-func="updateCart"
+        <button class="btn btn-outline-danger decrement" data-id="${this.dataset.id}" data-func="updateCart"
             data-role="decrement">
             <i class="fa-solid fa-minus"></i>
         </button>
 
         <small><span id="qty-${this.dataset.id}">${response["data"]["qty"]} </span>in cart</small>
 
-        <button class="btn btn-light increment" data-id="${this.dataset.id}" data-func="updateCart"
+        <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" data-func="updateCart"
             data-role="increment">
             <i class="fa-solid fa-plus"></i></button>
     </div>
@@ -131,18 +131,27 @@ async function updateCart() {
   }
 }
 
+/* Gets ran when removing from /cart/delete */
 async function removeFromCart() {
-  
   // delete item from db
-  await postData("/cart/delete", { id: this.dataset.id }, "delete");
+  const response = await postData("/cart/delete", { id: this.dataset.id }, "delete");
+  const data = response["data"] 
+  
+  // update total
+  const total = document.querySelector("#total");
+  const newSum = (total.dataset.sum - data["price"]).toFixed(2)
+  total.textContent = `$${ newSum }`;
+  total.dataset.sum = newSum
+
+  if (data["qty"] === 0) {
+    this.closest(".row").remove()
+    return
+  }
   
   // update el on DOM
   const qty = document.querySelector(`#qty-${this.dataset.id}`)
   qty.innerText = `${data["qty"]} `;
 
-  // update total
-  const total = document.querySelector("#total");
-  total.innerText = parseInt(total.innerText) - this.dataset.price;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with favorites - - - - - - - - - - - - - - - - - - - - - - -

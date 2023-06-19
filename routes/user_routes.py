@@ -145,7 +145,8 @@ def cart():
             "message": f"{message_verb} {product.title}.",
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
-            "count_products_in_cart": user.num_items_in_cart
+            "count_products_in_cart": user.num_items_in_cart,
+            "price": Product.query.get(prod_id).price
         }
 
         return jsonify({"data": data})
@@ -163,13 +164,19 @@ def remove_from_cart():
     try:
         db.session.delete(cart_instance)
         db.session.commit()
+
+        session[f"qty_{prod_id}"] -= 1
+        g.user.num_items_in_cart -= 1
     except:
         db.session.rollback()
 
     data = {
-        "message": f"Removed {cart_instance} from cart.",
-        "method": f"{request.method}",
-    }
+            "message": f"Removed {cart_instance}.",
+            "method": f"{request.method}",
+            "qty": session.get(f"qty_{prod_id}"),
+            "count_products_in_cart":g.user.num_items_in_cart,
+            "price": Product.query.get(prod_id).price
+        }
 
     return jsonify({"data": data})
 

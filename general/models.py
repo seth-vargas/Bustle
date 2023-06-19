@@ -6,19 +6,17 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-# cart_table = db.Table(
-#     "cart",
-#     db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
-#     db.Column("product_id", db.ForeignKey("products.id", ondelete="CASCADE"))
-# )
 class Cart(db.Model):
     """ Cart model """
 
     __tablename__ = "cart"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    prod_id = db.Column(db.Text, db.ForeignKey("products.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+    prod_id = db.Column(db.Text, db.ForeignKey(
+        "products.id", ondelete="CASCADE"))
+
 
 favorites_table = db.Table(
     "favorites",
@@ -41,7 +39,8 @@ class User(db.Model):
     cart_total_price = db.Column(db.Float, nullable=False, default=0)
     # cart = db.relationship("Product", secondary="cart", lazy="joined")
     cart = db.relationship("Cart", lazy="joined", backref="user")
-    favorites = db.relationship("Product", secondary="favorites", lazy="joined")
+    favorites = db.relationship(
+        "Product", secondary="favorites", lazy="joined")
 
     @classmethod
     def signup(cls, first_name, last_name, email, password):
@@ -101,12 +100,12 @@ class Product(db.Model):
     category = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=False, default=0)
     rate_count = db.Column(db.Integer, nullable=False, default=0)
- 
 
     def slugify(self):
         """ turns sloppy plain text into URL friendly route """
 
         return self.category.replace(" ", "-")
+
 
 def get_categories():
     """ returns categories as a list """
@@ -117,6 +116,7 @@ def get_categories():
         categories.add(prod.category)
 
     return categories
+
 
 def deslugify(category):
     """ turns URL friendly route into sloppy plain text """
@@ -130,8 +130,10 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+
 def get_users_cart(user):
     return db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).all()
 
+
 def get_total(user):
-    return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).scalar() or 0
+    return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).filter(User.id == user.id).scalar() or 0
