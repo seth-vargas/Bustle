@@ -8,6 +8,7 @@
 <div class="row">
     <h1>Your Cart</h1>
 </div>
+{% with  sum = 0 %}
 <div class="row">
     <ul>
 
@@ -24,21 +25,25 @@
                     <img src="{{product.image}}" style="height:100px;">
                     <small class="mx-5">{{product.title}}</small>
                 </div>
-                {% with price = "%.2f" | format(product.price) %}
-                <b>${{ price }}</b>
-                {% endwith %}
+                <div>
+                    {% with quantity = session["qty_" + product.id] %}
+                    {% with price = "%.2f" | format(product.price) %}
+                    <small><span class="qty-{{ product.id }}">{{ quantity }}</span> x ${{ price }}</small>
+                    <b>${{ "%.2f" | format(quantity | int * price | float) }}</b>
+                    {% endwith %}
+                    {% endwith %}
+                </div>
             </div>
-
+ 
         </div>
 
         {% endfor %}
 
     </ul>
     <div class="row">
-        {% with  sum = cart | sum(attribute="price") %}
-        <h2>Total: <span id="total" data-sum="{{ sum }}">{{ "$%.2f" | format(sum) }}</span></h2>
-        {% endwith %}
+        <h2>Total: <span id="total" data-sum="{{ total }}">{{ "$%.2f" | format(total) }}</span></h2>
     </div>
-
+    
 </div>
+{% endwith %}
 {% endblock %}

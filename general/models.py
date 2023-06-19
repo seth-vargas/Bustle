@@ -1,5 +1,6 @@
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -39,6 +40,7 @@ class User(db.Model):
     num_items_in_cart = db.Column(db.Integer, nullable=False, default=0)
     cart_total_price = db.Column(db.Float, nullable=False, default=0)
     # cart = db.relationship("Product", secondary="cart", lazy="joined")
+    cart = db.relationship("Cart", lazy="joined", backref="user")
     favorites = db.relationship("Product", secondary="favorites", lazy="joined")
 
     @classmethod
@@ -127,3 +129,9 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
+
+def get_users_cart(user):
+    return db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).all()
+
+def get_total(user):
+    return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).scalar() or 0

@@ -79,10 +79,10 @@ async function addToCart(e) {
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
   const data = response["data"];
 
-  const cartBubble = document.querySelector("#cart-count")
   
   if (!isUserLoggedIn(data)) return;
-
+  
+  const cartBubble = document.querySelector("#cart-count")
   cartBubble.innerText = data["count_products_in_cart"]
 
   this.outerHTML = `

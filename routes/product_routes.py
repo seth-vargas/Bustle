@@ -1,6 +1,6 @@
 from flask import render_template, g, request
-from general.models import Product, Cart, deslugify, get_categories
-from app import app
+from general.models import Product, User, Cart, deslugify, get_categories
+from app import app, db
 
 
 MAX_ITEMS_PER_PAGE = 6
@@ -11,11 +11,7 @@ def show_all_products():
 
     search = request.args.get('search')
     page = request.args.get('page', 1, type=int)
-    # cart = Cart.query.filter(Cart.user_id == g.user.id).all()
-    items_in_cart = Cart.query.filter(Cart.user_id == g.user.id).all()
-    cart = []
-    for item in items_in_cart:
-        cart.append(Product.query.get(item.prod_id))
+    cart = db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == g.user.id).all()
 
     if not search:
         products = Product.query.paginate(

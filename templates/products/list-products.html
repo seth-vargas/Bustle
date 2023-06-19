@@ -57,7 +57,7 @@ endif %}{% endblock %}
             </li>
             {% endfor %}
             <li class="list-group-item">
-                {% with sum = g.user.cart | sum(attribute="price") %}
+                {% with sum = cart | sum(attribute="price") %}
                 <h2>Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h2>
                 {% endwith %}
             </li>
@@ -90,14 +90,14 @@ endif %}{% endblock %}
                 </div>
 
                 {% with quantity = session["qty_" + product.id] %}
-                {% if product in g.user.cart and quantity != 0 %}
+                {% if product in cart and quantity != 0 %}
                 <div class="d-flex justify-content-evenly align-items-center my-2">
                     <button class="btn btn-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
                         data-role="decrement">
                         <i class="fa-solid fa-minus"></i>
                     </button>
 
-                    <small><span id="qty-{{ product.id }}">{{ quantity }} </span>in cart</small>
+                    <small><span id="qty-{{ product.id }}">{{ quantity }} </span> in cart</small>
 
                     <button class="btn btn-light increment" data-id="{{ product.id }}" data-func="updateCart"
                         data-role="increment">

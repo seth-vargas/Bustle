@@ -1,7 +1,7 @@
-from flask import render_template, redirect, flash, session, g, request, jsonify, sessions
+from flask import render_template, redirect, flash, session, g, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from general.forms import EditUserForm, ChangePasswordForm
-from general.models import Product, User, Cart
+from general.models import Product, User, Cart, get_users_cart, get_total
 from app import app, db
 
 
@@ -107,12 +107,9 @@ def cart():
         user = User.query.get_or_404(g.user.id)
 
         if request.method == "GET":
-            items_in_cart = Cart.query.filter(Cart.user_id == user.id).all()
-            cart = []
-            for item in items_in_cart:
-                cart.append(Product.query.get(item.prod_id))
-
-            return render_template("cart.html", user=user, cart=cart)
+            cart = get_users_cart(user)
+            total = get_total(user)
+            return render_template("cart.html", user=user, cart=cart, total=total)
 
         prod_id = request.get_json()["id"]
         product = Product.query.get_or_404(prod_id)
@@ -120,28 +117,24 @@ def cart():
         if request.method == "POST":
             session[f"qty_{prod_id}"] = 1
             user.num_items_in_cart += 1
-            message_verb = "Added"
 
             db.session.add(Cart(user_id=user.id, prod_id=prod_id))
             db.session.commit()
             
         elif request.method == "PATCH":
+            session[f"qty_{prod_id}"] += 1
+            user.num_items_in_cart += 1
+            db.session.add(Cart(user_id=user.id, prod_id=prod_id))
+            db.session.commit()
 
-            if request.get_json()["role"] == "increment":
-                session[f"qty_{prod_id}"] += 1
-                user.num_items_in_cart += 1
-                message_verb = "Added"
-
-            else:
-                session[f"qty_{prod_id}"] -= 1
-                user.num_items_in_cart -= 1
-                message_verb = "Removed"
+        else:
+            return "Cool beans kiddo"
 
         db.session.add(user)
         db.session.commit()
 
         data = {
-            "message": f"{message_verb} {product.title}.",
+            "message": f"Added {product.title}.",
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
             "count_products_in_cart": user.num_items_in_cart
@@ -150,25 +143,39 @@ def cart():
         return jsonify({"data": data})
 
 
-@app.route("/cart/delete", methods=["DELETE"])
+@app.route("/cart/delete", methods=["DELETE", "PATCH"])
 def remove_from_cart():
     if not g.user:
         flash("Please log in to interact with your shopping cart", "danger")
         return redirect("/login")
+    
+    if request.method == "DELETE":
+        prod_id = request.get_json()["id"]
+        cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
 
-    prod_id = request.get_json()["id"]
-    cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
+        db.session.delete(cart_instance)
+        db.session.commit()
 
-    db.session.delete(cart_instance)
-    db.session.commit()
+        session[f"qty_{prod_id}"] -= 1
+        g.user.num_items_in_cart -= 1
+
+    elif request.method == "PATCH":
+        session[f"qty_{prod_id}"] -= 1
+        g.user.num_items_in_cart -= 1
+        cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
+        db.session.delete(cart_instance)
+
+    else:
+        return "Cool beans kiddo"
 
     data = {
         "message": f"Removed {cart_instance} from cart.",
         "method": f"{request.method}",
+        "qty": session.get(f"qty_{prod_id}"),
+        "count_products_in_cart": g.user.num_items_in_cart
     }
 
     return jsonify({"data": data})
-
 
 @app.route("/favorites", methods=["GET", "POST"])
 def show_favorites():
