@@ -132,10 +132,14 @@ async function updateCart() {
 }
 
 async function removeFromCart() {
+  
   // delete item from db
   await postData("/cart/delete", { id: this.dataset.id }, "delete");
-  // remove el from DOM
-  this.closest(".row").remove();
+  
+  // update el on DOM
+  const qty = document.querySelector(`#qty-${this.dataset.id}`)
+  qty.innerText = `${data["qty"]} `;
+
   // update total
   const total = document.querySelector("#total");
   total.innerText = parseInt(total.innerText) - this.dataset.price;

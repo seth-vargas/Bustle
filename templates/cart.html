@@ -28,7 +28,7 @@
                 <div>
                     {% with quantity = session["qty_" + product.id] %}
                     {% with price = "%.2f" | format(product.price) %}
-                    <small><span class="qty-{{ product.id }}">{{ quantity }}</span> x ${{ price }}</small>
+                    <small><span id="qty-{{ product.id }}">{{ quantity }}</span> x ${{ price }}</small>
                     <b>${{ "%.2f" | format(quantity | int * price | float) }}</b>
                     {% endwith %}
                     {% endwith %}
