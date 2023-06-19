@@ -147,7 +147,8 @@ def cart():
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
             "count_products_in_cart": user.num_items_in_cart,
-            "price": Product.query.get(prod_id).price
+            "price": Product.query.get(prod_id).price,
+            "id": prod_id
         }
 
         return jsonify({"data": data})
@@ -164,6 +165,7 @@ def remove_from_cart():
 
     session[f"qty_{prod_id}"] -= 1
     g.user.num_items_in_cart -= 1
+
     try:
         db.session.delete(cart_instance)
         db.session.commit()
@@ -176,7 +178,8 @@ def remove_from_cart():
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
             "count_products_in_cart": g.user.num_items_in_cart,
-            "price": Product.query.get(prod_id).price
+            "price": Product.query.get(prod_id).price,
+            "id": prod_id
         }
 
     return jsonify({"data": data})

@@ -28,12 +28,6 @@ def not_found(error):
     return render_template("errors/404.html")
 
 
-@app.errorhandler(500)
-def server_error(error):
-    """ Handles 500 errors """
-    return render_template("500.html")
-
-
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""

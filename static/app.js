@@ -1,10 +1,10 @@
 // - - - - - - - - - - - - - - - - - - - - - - -  DOM manipulation - - - - - - - - - - - - - - - - - - - - - - -
 
 addEventListener("load", (event) => {
-    const content = document.getElementById("content")
-    const loader = document.getElementById("loader")
-    content.removeAttribute("class")
-    loader.setAttribute("class", "visually-hidden")
+  const content = document.getElementById("content")
+  const loader = document.getElementById("loader")
+  content.removeAttribute("class")
+  loader.setAttribute("class", "visually-hidden")
 });
 
 $(document).on("click", ".add-to-cart", addToCart);
@@ -74,14 +74,16 @@ async function editData(url, data) {
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with carts - - - - - - - - - - - - - - - - - - - - - - -
 
+/* Runs when user initally adds an item to their cart */
 async function addToCart(e) {
   e.preventDefault();
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
   const data = response["data"];
 
-  
+  console.log(data)
+
   if (!isUserLoggedIn(data)) return;
-  
+
   const cartBubble = document.querySelector("#cart-count")
   cartBubble.innerText = data["count_products_in_cart"]
 
@@ -99,6 +101,24 @@ async function addToCart(e) {
             <i class="fa-solid fa-plus"></i></button>
     </div>
     `;
+
+  const cartDiv = document.querySelector("#cart")
+  const newLi = document.createElement("li")
+  newLi.classList.add("list-group-item")
+  newLi.innerHTML = `
+    <div class="row">
+      <small>${data.title}</small>
+    </div>
+    <div class="row">
+      <small>
+        <span id="qty-${data.id}" data-id="${data.id}" data-price="${data.price}">${data.qty}</span> x $${data.price.toFixed(2)}
+      </small>
+    </div>
+    <div class="row">
+      <b>${(data.price * data.qty).toFixed(2)}</b>
+    </div>
+  `
+  cartDiv.append(newLi)
 }
 
 /* Gets ran when the user increments / decrements their cart */
@@ -113,6 +133,8 @@ async function updateCart() {
   const data = response["data"]
 
   const cartBubble = document.querySelector("#cart-count")
+  const qty = document.querySelector(`#qty-${this.dataset.id}`);
+  qty.innerText = `${data["qty"]} `;
   cartBubble.innerText = data["count_products_in_cart"]
 
   const isZero = data["qty"] <= 0 ? true : false;
@@ -135,23 +157,25 @@ async function updateCart() {
 async function removeFromCart() {
   // delete item from db
   const response = await postData("/cart/delete", { id: this.dataset.id }, "delete");
-  const data = response["data"] 
-  
+  const data = response["data"]
+
   // update total
   const total = document.querySelector("#total");
   const newSum = (total.dataset.sum - data["price"]).toFixed(2)
-  total.textContent = `$${ newSum }`;
+  total.textContent = `$${newSum}`;
   total.dataset.sum = newSum
+
+  const cartBubble = document.querySelector("#cart-count")
+  cartBubble.innerText = data["count_products_in_cart"]
+
+  // update el on DOM
+  const qty = document.querySelector(`#qty-${this.dataset.id}`)
+  qty.innerText = `${data["qty"]} `;
 
   if (data["qty"] === 0) {
     this.closest(".row").remove()
     return
   }
-  
-  // update el on DOM
-  const qty = document.querySelector(`#qty-${this.dataset.id}`)
-  qty.innerText = `${data["qty"]} `;
-
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with favorites - - - - - - - - - - - - - - - - - - - - - - -

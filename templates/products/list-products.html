@@ -41,33 +41,41 @@ endif %}{% endblock %}
     </div>
 </div>
 <div class="row">
-    <div class="col-2">
+    <div class="col-2 d-none d-xl-block">
         <ul class="list-group">
             <li class="list-group-item">
                 <h4 class="text-center">My Cart</h4>
+                {% with sum = cart | sum(attribute="price") %}
+                <h6 class="text-center">Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h6>
+                {% endwith %}
             </li>
-            {% for item in cart %}
+            {% for product in cart %}
             <li class="list-group-item">
                 <div class="row">
-                    <small>{{ item.title }}</small>
+                    <small>{{ product.title }}</small>
                 </div>
                 <div class="row">
-                    <b>${{ "%.2f" | format(item.price) }}</b>
+                    {% with quantity = session["qty_" + product.id] %}
+                    {% with price = "%.2f" | format(product.price) %}
+                        <small>
+                            <span id="qty-{{ product.id }}" data-id="{{ product.id }}" data-price="{{ product.price }}">
+                                {{ quantity }}
+                            </span> x ${{ price }}
+                        </small>
+                    <b>${{ "%.2f" | format(quantity | int * price | float) }}</b>
+                    {% endwith %}
+                    {% endwith %}
                 </div>
             </li>
             {% endfor %}
-            <li class="list-group-item">
-                {% with sum = cart | sum(attribute="price") %}
-                <h2>Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h2>
-                {% endwith %}
-            </li>
+            <div id="cart"></div>
             <a href="/checkout" class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
 
         </ul>
     </div>
 
     <div class="col">
-        <div class="row row-cols-xs-1 row-cols-sm-2  row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product in products.items %}
 
             <div class="col">
