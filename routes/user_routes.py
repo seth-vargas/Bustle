@@ -143,6 +143,7 @@ def cart():
 
         data = {
             "message": f"{message_verb} {product.title}.",
+            "title": product.title,
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
             "count_products_in_cart": user.num_items_in_cart,
@@ -161,12 +162,12 @@ def remove_from_cart():
     prod_id = request.get_json()["id"]
     cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
 
+    session[f"qty_{prod_id}"] -= 1
+    g.user.num_items_in_cart -= 1
     try:
         db.session.delete(cart_instance)
         db.session.commit()
 
-        session[f"qty_{prod_id}"] -= 1
-        g.user.num_items_in_cart -= 1
     except:
         db.session.rollback()
 
@@ -174,7 +175,7 @@ def remove_from_cart():
             "message": f"Removed {cart_instance}.",
             "method": f"{request.method}",
             "qty": session.get(f"qty_{prod_id}"),
-            "count_products_in_cart":g.user.num_items_in_cart,
+            "count_products_in_cart": g.user.num_items_in_cart,
             "price": Product.query.get(prod_id).price
         }
 
