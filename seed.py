@@ -1,5 +1,5 @@
 from app import db
-from general.models import User, Product
+from general.models import User, Product, Cart
 import requests
 import stripe
 from general.secrets import stripe_key
@@ -47,7 +47,7 @@ for prod in products.data:
         title=str(prod.name),
         image=str(prod.images[0]),
         description=str(prod.description),
-        price=float(prod.unit_amount / 100),
+        price=prod.unit_amount / 100,
         category=str(prod.metadata.category),
         rating=float(prod.metadata.rating),
         rate_count=int(prod.metadata.rate_count)
@@ -59,4 +59,9 @@ user1 = User.signup("seth", "vargas", "sv@gmail.com", "Password")
 user2 = User.signup("kaitlyn", "vargas", "kv@gmail.com", "Password")
 
 db.session.add_all([user1, user2])
+db.session.commit()
+
+products = Product.query.all()
+db.session.add(Cart(user_id=user1.id, prod_id=products[0].id))
+db.session.add(Cart(user_id=user1.id, prod_id=products[1].id))
 db.session.commit()
