@@ -5,46 +5,14 @@ endif %}{% endblock %}
 
 {% block content %}
 <div class="row mt-3">
-    <div class="col mt-3">
-        {% if category %}
-        <div class="row">
-            <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Products</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ category }}
-                </ol>
-            </nav>
-        </div>
-        {% else %}
-        <div class="row">
-            <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Products</li>
-                </ol>
-            </nav>
-        </div>
-        {% endif %}
+    <div class="col">
+        {% include "breadcrumb.html" %}
     </div>
     <div class="col">
-        <div class="row">
-            {% include "paginate.html" %}
-        </div>
+        {% include "paginate.html" %}
     </div>
     <div class="col text-end">
-        <div class="dropdown">
-            <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-sort"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                <li>
-                    <h6 class="dropdown-header">Sort by</h6>
-                </li>
-                <li><a class="dropdown-item active" href="#">A-Z</a></li>
-                <li><a class="dropdown-item" href="#">Z-A</a></li>
-                <li><a class="dropdown-item" href="#">Price High to Low </a></li>
-                <li><a class="dropdown-item" href="#">Price Low to High </a></li>
-            </ul>
-        </div>
+        {% include "sort.html" %}
     </div>
 </div>
 <div class="row">
@@ -64,18 +32,20 @@ endif %}{% endblock %}
                 </div>
                 <div class="row">
                     {% with price = "%.2f" | format(product.price) %}
-                        <small>
-                            <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}" data-price="{{ product.price }}">
-                                {{ cart_instance.quantity }}
-                            </span> x ${{ price }}
-                        </small>
+                    <small>
+                        <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}"
+                            data-price="{{ product.price }}">
+                            {{ cart_instance.quantity }}
+                        </span> x ${{ price }}
+                    </small>
                     <b>${{ "%.2f" | format(cart_instance.quantity | int * price | float) }}</b>
                     {% endwith %}
                 </div>
             </li>
             {% endfor %}
             <div id="cart"></div>
-            <a href="/create-checkout-session" class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
+            <a href="/create-checkout-session"
+                class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
 
         </ul>
     </div>

@@ -1,0 +1,18 @@
+{% if category %}
+<div class="row">
+    <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ category }}
+        </ol>
+    </nav>
+</div>
+{% else %}
+<div class="row">
+    <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Products</li>
+        </ol>
+    </nav>
+</div>
+{% endif %}
