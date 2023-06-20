@@ -101,57 +101,71 @@ def cart():
             "message": "Please log in to interact with your shopping cart",
             "class": "danger"
         }
+
         return jsonify({"data": data})
 
-    else:
-        user = User.query.get_or_404(g.user.id)
+    user = User.query.get_or_404(g.user.id)
 
-        if request.method == "GET":
-            cart = get_users_cart(user)
-            total = get_total(user)
-            return render_template("cart.html", user=user, cart=cart, total=total)
+    if request.method == "GET":
+        query = db.session.query(Product, Cart).join(
+            Cart, Product.id == Cart.prod_id).all()
+        total = get_total(user)
 
+        return render_template("cart.html", user=user, query=query, total=total)
+
+    if request.method == "POST":
         prod_id = request.get_json()["id"]
-        product = Product.query.get_or_404(prod_id)
+        product = Product.query.get(prod_id)
+        new_cart_instance = Cart(user_id=user.id, prod_id=prod_id)
+        db.session.add(new_cart_instance)
 
-        if request.method == "POST":
-            session[f"qty_{prod_id}"] = 1
-            user.num_items_in_cart += 1
-            message_verb = "Added"
-
-            db.session.add(Cart(user_id=user.id, prod_id=prod_id))
+        try:
             db.session.commit()
-            
-        elif request.method == "PATCH":
+            user.num_items_in_cart += 1
+            data = {
+                "message": "Created new cart instance",
+                "instance": f"{new_cart_instance}",
+                "prod_title": product.title,
+                "prod_price": product.price,
+                "prod_id": prod_id,
+                "num_items_in_cart": user.get_num_items_in_cart()
+            }
 
-            if request.get_json()["role"] == "increment":
-                session[f"qty_{prod_id}"] += 1
-                user.num_items_in_cart += 1
-                message_verb = "Added"
-                db.session.add(Cart(user_id=user.id, prod_id=prod_id))
-                db.session.commit()
+        except Exception as err:
+            db.session.rollback()
+            data = {
+                "message": f"Failed to create new instance",
+                "error": f"{type(err)}"
+            }
 
-            else:
-                session[f"qty_{prod_id}"] -= 1
-                user.num_items_in_cart -= 1
-                message_verb = "Removed"
-                cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
-                db.session.delete(cart_instance)
+        return jsonify(data)
 
-        db.session.add(user)
+    elif request.method == "PATCH":
+        prod_id = request.get_json()["id"]
+        role = request.get_json()["role"]
+        cart_instance = Cart.query.filter(Cart.prod_id == prod_id).one()
+        product = Product.query.get(prod_id)
+
+        if role == "increment":
+            cart_instance.quantity += 1
+
+        elif role == "decrement":
+            cart_instance.quantity -= 1
+
+        db.session.add(cart_instance)
         db.session.commit()
 
         data = {
-            "message": f"{message_verb} {product.title}.",
-            "title": product.title,
+            "cart_instance": f"{cart_instance}",
             "method": f"{request.method}",
-            "qty": session.get(f"qty_{prod_id}"),
-            "count_products_in_cart": user.num_items_in_cart,
-            "price": Product.query.get(prod_id).price,
-            "id": prod_id
+            "message": f"{role} {product.title}.",
+            "prod_price": product.price,
+            "prod_id": prod_id,
+            "qty": cart_instance.quantity,
+            "prod_title": product.title,
+            "num_items_in_cart": user.get_num_items_in_cart()
         }
-
-        return jsonify({"data": data})
+        return jsonify(data)
 
 
 @app.route("/cart/delete", methods=["DELETE"])
@@ -163,26 +177,21 @@ def remove_from_cart():
     prod_id = request.get_json()["id"]
     cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
 
-    session[f"qty_{prod_id}"] -= 1
-    g.user.num_items_in_cart -= 1
+    try:
+        g.user.num_items_in_cart -= cart_instance.quantity
+    except:
+        return jsonify({"message": "Cart instance does not exist."})
 
     try:
         db.session.delete(cart_instance)
         db.session.commit()
+        data = {"message": f"Deleted {cart_instance}.",}
 
     except:
         db.session.rollback()
-
-    data = {
-            "message": f"Removed {cart_instance}.",
-            "method": f"{request.method}",
-            "qty": session.get(f"qty_{prod_id}"),
-            "count_products_in_cart": g.user.num_items_in_cart,
-            "price": Product.query.get(prod_id).price,
-            "id": prod_id
-        }
-
-    return jsonify({"data": data})
+        return jsonify({"message": f"Failed to delete."})
+    
+    return jsonify(data)
 
 
 @app.route("/favorites", methods=["GET", "POST"])

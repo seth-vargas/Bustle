@@ -11,11 +11,16 @@ class Cart(db.Model):
 
     __tablename__ = "cart"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id", ondelete="CASCADE"))
+        "users.id", ondelete="CASCADE"), primary_key=True)
     prod_id = db.Column(db.Text, db.ForeignKey(
-        "products.id", ondelete="CASCADE"))
+        "products.id", ondelete="CASCADE"), primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    def __init__(self, user_id, prod_id):
+        self.user_id = user_id
+        self.prod_id = prod_id
+
 
 
 favorites_table = db.Table(
@@ -85,6 +90,10 @@ class User(db.Model):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    
+    def get_num_items_in_cart(self):
+            return db.session.query(func.sum(Cart.quantity)).filter(User.id == self.id).scalar() or 0
 
 
 class Product(db.Model):

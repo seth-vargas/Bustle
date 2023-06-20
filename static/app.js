@@ -51,6 +51,9 @@ function isUserLoggedIn(data) {
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with backend requests - - - - - - - - - - - - - - - - - - - - - - -
 
 async function postData(url = "", data = {}, instructions) {
+
+  console.log("IN postData")
+
   const response = await fetch(url, {
     method: instructions,
     headers: {
@@ -62,6 +65,9 @@ async function postData(url = "", data = {}, instructions) {
 }
 
 async function editData(url, data) {
+
+  console.log("IN editData")
+
   const response = await fetch(url, {
     method: "PATCH",
     headers: {
@@ -76,16 +82,16 @@ async function editData(url, data) {
 
 /* Runs when user initally adds an item to their cart */
 async function addToCart(e) {
+
+  console.log("IN addToCart")
+
   e.preventDefault();
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
-  const data = response["data"];
 
-  console.log(data)
-
-  if (!isUserLoggedIn(data)) return;
+  if (!isUserLoggedIn(response)) return;
 
   const cartBubble = document.querySelector("#cart-count")
-  cartBubble.innerText = data["count_products_in_cart"]
+  cartBubble.innerText = response.num_items_in_cart
 
   this.outerHTML = `
     <div class="d-flex justify-content-evenly align-items-center my-2">
@@ -94,7 +100,7 @@ async function addToCart(e) {
             <i class="fa-solid fa-minus"></i>
         </button>
 
-        <small><span id="qty-${this.dataset.id}">${response["data"]["qty"]} </span>in cart</small>
+        <small><span id="qty-${this.dataset.id}-card">1</span> in cart</small>
 
         <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" data-func="updateCart"
             data-role="increment">
@@ -107,15 +113,15 @@ async function addToCart(e) {
   newLi.classList.add("list-group-item")
   newLi.innerHTML = `
     <div class="row">
-      <small>${data.title}</small>
+      <small>${response.prod_title}</small>
     </div>
     <div class="row">
       <small>
-        <span id="qty-${data.id}" data-id="${data.id}" data-price="${data.price}">${data.qty}</span> x $${data.price.toFixed(2)}
+        <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price.toFixed(2)}
       </small>
     </div>
     <div class="row">
-      <b>${(data.price * data.qty).toFixed(2)}</b>
+      <b>${(response.prod_price).toFixed(2)}</b>
     </div>
   `
   cartDiv.append(newLi)
@@ -124,44 +130,47 @@ async function addToCart(e) {
 /* Gets ran when the user increments / decrements their cart */
 
 async function updateCart() {
+
+  console.log("IN updateCart")
+
   const response = await editData("/cart", {
     id: this.dataset.id,
     func: this.dataset.func,
     role: this.dataset.role,
   });
 
-  const data = response["data"]
-
   const cartBubble = document.querySelector("#cart-count")
-  const qty = document.querySelector(`#qty-${this.dataset.id}`);
-  qty.innerText = `${data["qty"]} `;
-  cartBubble.innerText = data["count_products_in_cart"]
+  const cartQuantity = document.querySelector(`#qty-${this.dataset.id}-cart`);
+  const cardQuantity = document.querySelector(`#qty-${this.dataset.id}-card`);
 
-  const isZero = data["qty"] <= 0 ? true : false;
-
+  cartQuantity.innerText = `${response.qty} `
+  cartBubble.innerText = response.num_items_in_cart
+  
+  const isZero = response.qty <= 0 ? true : false;
+  
   if (isZero) {
     this.parentElement.outerHTML = `
     <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="${this.dataset.id}" method="post">
-        <button class="btn btn-outline-dark">Add to cart</button>
+    <button class="btn btn-outline-dark">Add to cart</button>
     </form>
     `;
-
+    
     return postData("/cart/delete", { id: this.dataset.id }, "DELETE");
-  } else {
-    const qty = document.querySelector(`#qty-${this.dataset.id}`);
-    qty.innerText = `${data["qty"]} `;
   }
+  cardQuantity.innerText = `${response.qty} `
 }
 
 /* Gets ran when removing from /cart/delete */
 async function removeFromCart() {
+
+  console.log("IN removeFromCart")
+
   // delete item from db
   const response = await postData("/cart/delete", { id: this.dataset.id }, "delete");
-  const data = response["data"]
 
   // update total
   const total = document.querySelector("#total");
-  const newSum = (total.dataset.sum - data["price"]).toFixed(2)
+  const newSum = (total.dataset.sum - response["price"]).toFixed(2)
   total.textContent = `$${newSum}`;
   total.dataset.sum = newSum
 
@@ -169,8 +178,8 @@ async function removeFromCart() {
   cartBubble.innerText = data["count_products_in_cart"]
 
   // update el on DOM
-  const qty = document.querySelector(`#qty-${this.dataset.id}`)
-  qty.innerText = `${data["qty"]} `;
+  const qty = document.querySelector(`#qty-${this.dataset.id}-card`)
+  qty.innerText = `${data.qty} `;
 
   if (data["qty"] === 0) {
     this.closest(".row").remove()

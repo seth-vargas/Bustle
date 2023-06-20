@@ -11,22 +11,22 @@ def show_all_products():
 
     search = request.args.get('search')
     page = request.args.get('page', 1, type=int)
-    
+    query = []
+
     if g.user:
-        cart = db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == g.user.id).all()
-    else:
-        cart = []
+        query = db.session.query(Product, Cart).join(
+            Cart, Product.id == Cart.prod_id).all()
 
     if not search:
-        products = Product.query.paginate(
+        products = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).paginate(
             page=page, per_page=MAX_ITEMS_PER_PAGE)
     else:
-        products = Product.query.filter(
+        products = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).filter(
             Product.title.ilike(f"%{search}%") |
             Product.category.ilike(f"%{search}%")
         ).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
 
-    return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, cart=cart)
+    return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, query=query)
 
 
 @app.route("/products/<id>")
@@ -45,10 +45,14 @@ def show_products_by_category(category):
     """ Shows list of products by category """
 
     page = request.args.get('page', 1, type=int)
+    query = []
+
+    if g.user:
+        query = db.session.query(Product, Cart).join(
+            Cart, Product.id == Cart.prod_id).all()
 
     category = deslugify(category)
-    products = Product.query.filter(
+    products = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).filter(
         Product.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
 
-    return render_template("products/list-products.html", products=products, category=category, categories=get_categories())
-
+    return render_template("products/list-products.html", products=products, category=category, categories=get_categories(), query=query)
