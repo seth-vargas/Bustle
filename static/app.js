@@ -148,19 +148,17 @@ async function updateCart() {
   cartBubble.innerText = response.num_items_in_cart
   cardQuantity.innerText = `${response.qty} `
   
-  const isZero = response.qty <= 0 ? true : false;
-  
-  if (isZero) {
-    this.parentElement.outerHTML = `
+  if (response.qty <= 0) {
+    const cartLi = document.querySelector(`#${this.dataset.id}`)
+    const postForm = this.parentElement
+
+    cartLi.remove()
+    postForm.outerHTML = `
     <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="${this.dataset.id}" method="post">
     <button class="btn btn-outline-dark">Add to cart</button>
     </form>
     `;
-    
     postData("/cart/delete", { id: this.dataset.id }, "DELETE");
-
-    cartLi = document.querySelector(`#${this.dataset.id}`)
-    cartLi.remove()
   }
 }
 
