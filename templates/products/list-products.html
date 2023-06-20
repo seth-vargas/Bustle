@@ -54,7 +54,7 @@ endif %}{% endblock %}
                 {% endwith %}
             </li>
             {% for product, cart_instance in query %}
-            <li class="list-group-item">
+            <li class="list-group-item" id="{{ product.id }}">
                 <div class="row">
                     <small>{{ product.title }}</small>
                 </div>

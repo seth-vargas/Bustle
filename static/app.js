@@ -111,6 +111,7 @@ async function addToCart(e) {
   const cartDiv = document.querySelector("#cart")
   const newLi = document.createElement("li")
   newLi.classList.add("list-group-item")
+  newLi.id = `${response.prod_id}`
   newLi.innerHTML = `
     <div class="row">
       <small>${response.prod_title}</small>
@@ -145,6 +146,7 @@ async function updateCart() {
 
   cartQuantity.innerText = `${response.qty} `
   cartBubble.innerText = response.num_items_in_cart
+  cardQuantity.innerText = `${response.qty} `
   
   const isZero = response.qty <= 0 ? true : false;
   
@@ -155,9 +157,11 @@ async function updateCart() {
     </form>
     `;
     
-    return postData("/cart/delete", { id: this.dataset.id }, "DELETE");
+    postData("/cart/delete", { id: this.dataset.id }, "DELETE");
+
+    cartLi = document.querySelector(`#${this.dataset.id}`)
+    cartLi.remove()
   }
-  cardQuantity.innerText = `${response.qty} `
 }
 
 /* Gets ran when removing from /cart/delete */
