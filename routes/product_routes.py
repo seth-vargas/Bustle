@@ -11,7 +11,11 @@ def show_all_products():
 
     search = request.args.get('search')
     page = request.args.get('page', 1, type=int)
-    cart = db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == g.user.id).all()
+    
+    if g.user:
+        cart = db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == g.user.id).all()
+    else:
+        cart = []
 
     if not search:
         products = Product.query.paginate(
