@@ -47,7 +47,7 @@ for prod in products.data:
         title=str(prod.name),
         image=str(prod.images[0]),
         description=str(prod.description),
-        price=int(prod.unit_amount / 100),
+        price=float(prod.unit_amount / 100),
         category=str(prod.metadata.category),
         rating=float(prod.metadata.rating),
         rate_count=int(prod.metadata.rate_count)
