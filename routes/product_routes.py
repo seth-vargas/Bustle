@@ -1,9 +1,10 @@
 from flask import render_template, g, request
-from general.models import Product, User, Cart, deslugify, get_categories
+from general.models import Product, User, Cart, deslugify, get_categories, get_query
 from app import app, db
 
 
 MAX_ITEMS_PER_PAGE = 6
+dropdown_options = ["A-Z", "Z-A", "High-Low", "Low-High"]
 
 # General routes for app
 @app.route("/products")
@@ -12,41 +13,25 @@ def show_all_products():
     search = request.args.get("search")
     page = request.args.get("page", 1, type=int)
     sort_by = request.args.get("sort_by")
-    query = []
+    ordered_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.id)
 
     if g.user:
-        query = db.session.query(Product, Cart).join(
-            Cart, Product.id == Cart.prod_id).all()
+        query = g.user.get_cart()
+    else:
+        query = []
 
-    product_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.title)
-
-    if sort_by == "A-Z":
-        # order by prod.title
-        product_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.title)
-
-    elif sort_by == "Z-A":
-        # order by prod.title desc
-        product_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.title.desc())
-    
-    elif sort_by == "L-H":
-        # order by prod.price
-        product_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.price)
-    
-    elif sort_by == "H-L":
-        # order by prod.price desc
-        product_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.price.desc())
-
+    ordered_query = get_query(sort_by)
 
     if not search:
-        products = product_query.paginate(
+        products = ordered_query.paginate(
             page=page, per_page=MAX_ITEMS_PER_PAGE)
     else:
-        products = product_query.filter(
+        products = ordered_query.filter(
             Product.title.ilike(f"%{search}%") |
             Product.category.ilike(f"%{search}%")
         ).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
 
-    return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, query=query, sort_by=sort_by)
+    return render_template("products/list-products.html", products=products, categories=get_categories(), search=search, query=query, sort_by=sort_by, dropdown_options=dropdown_options)
 
 
 @app.route("/products/<id>")
@@ -65,14 +50,16 @@ def show_products_by_category(category):
     """ Shows list of products by category """
 
     page = request.args.get("page", 1, type=int)
-    query = []
+    sort_by = request.args.get("sort_by")
 
     if g.user:
-        query = db.session.query(Product, Cart).join(
-            Cart, Product.id == Cart.prod_id).all()
+        query = g.user.get_cart()
+    else:
+        query = []
+
+    ordered_query = get_query(sort_by, category)
 
     category = deslugify(category)
-    products = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).filter(
-        Product.category == category).paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
+    products = ordered_query.paginate(page=page, per_page=MAX_ITEMS_PER_PAGE)
 
-    return render_template("products/list-products.html", products=products, category=category, categories=get_categories(), query=query)
+    return render_template("products/list-products.html", products=products, category=category, categories=get_categories(), query=query, sort_by=sort_by, dropdown_options=dropdown_options)

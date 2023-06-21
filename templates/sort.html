@@ -6,9 +6,22 @@
         <li>
             <h6 class="dropdown-header">Sort by</h6>
         </li>
-        <li><a class="dropdown-item" href="{{ url_for('show_all_products', sort_by='A-Z') }}">A-Z</a></li>
-        <li><a class="dropdown-item" href="{{ url_for('show_all_products', sort_by='Z-A') }}">Z-A</a></li>
-        <li><a class="dropdown-item" href="{{ url_for('show_all_products', sort_by='H-L') }}">Price High to Low </a></li>
-        <li><a class="dropdown-item" href="{{ url_for('show_all_products', sort_by='L-H') }}">Price Low to High </a></li>
+
+        {% for option in dropdown_options %}
+            {% if category %}
+                {% if option == sort_by %}
+                    <li><a class="dropdown-item active" href="{{ url_for('show_products_by_category', category=category, sort_by=option) }}">{{ option }}</a></li>
+                {% else %}
+                    <li><a class="dropdown-item" href="{{ url_for('show_products_by_category', category=category, sort_by=option) }}">{{ option }}</a></li>
+                {% endif %}
+            {% else %}
+                {% if option == sort_by %}
+                    <li><a class="dropdown-item active" href="{{ url_for('show_all_products', sort_by=option) }}">{{ option }}</a></li>
+                {% else %}
+                    <li><a class="dropdown-item" href="{{ url_for('show_all_products', sort_by=option) }}">{{ option }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
     </ul>
 </div>
