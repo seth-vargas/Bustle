@@ -31,12 +31,12 @@ function updateHtmlOnFavoritestUpdate(method, element) {
   }
 }
 
-function isUserLoggedIn(data) {
-  if (data["class"] === "danger") {
+function isUserLoggedIn(response) {
+  if (response.class === "danger") {
     $("#flashed-messages").replaceWith(`
         <div id="flashed-messages">
-        <div class="alert alert-${data["class"]} alert-dismissible fade show" role="alert">
-        <strong>${data["message"]}</strong>
+        <div class="alert alert-${response.class} alert-dismissible fade show" role="alert">
+        <strong>${response.message}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
          </div>
         </div>
@@ -88,12 +88,12 @@ async function addToCart(e) {
   e.preventDefault();
   const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
 
-  if (!isUserLoggedIn(response)) return;
+  if (isUserLoggedIn(response)) {
 
-  const cartBubble = document.querySelector("#cart-count")
-  cartBubble.innerText = response.num_items_in_cart
+    const cartBubble = document.querySelector("#cart-count")
+    cartBubble.innerText = response.num_items_in_cart
 
-  this.outerHTML = `
+    this.outerHTML = `
     <div class="d-flex justify-content-evenly align-items-center my-2">
         <button class="btn btn-outline-danger decrement" data-id="${this.dataset.id}" data-func="updateCart"
             data-role="decrement">
@@ -108,11 +108,11 @@ async function addToCart(e) {
     </div>
     `;
 
-  const cartDiv = document.querySelector("#cart")
-  const newLi = document.createElement("li")
-  newLi.classList.add("list-group-item")
-  newLi.id = `${response.prod_id}`
-  newLi.innerHTML = `
+    const cartDiv = document.querySelector("#cart")
+    const newLi = document.createElement("li")
+    newLi.classList.add("list-group-item")
+    newLi.id = `${response.prod_id}`
+    newLi.innerHTML = `
     <div class="row">
       <small>${response.prod_title}</small>
     </div>
@@ -125,7 +125,8 @@ async function addToCart(e) {
       <b>${(response.prod_price).toFixed(2)}</b>
     </div>
   `
-  cartDiv.append(newLi)
+    cartDiv.append(newLi)
+  }
 }
 
 /* Gets ran when the user increments / decrements their cart */
@@ -147,7 +148,7 @@ async function updateCart() {
   cartQuantity.innerText = `${response.qty} `
   cartBubble.innerText = response.num_items_in_cart
   cardQuantity.innerText = `${response.qty} `
-  
+
   if (response.qty <= 0) {
     const cartLi = document.querySelector(`#${this.dataset.id}`)
     const postForm = this.parentElement

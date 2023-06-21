@@ -102,7 +102,7 @@ def cart():
             "class": "danger"
         }
 
-        return jsonify({"data": data})
+        return jsonify(data)
 
     user = User.query.get_or_404(g.user.id)
 
