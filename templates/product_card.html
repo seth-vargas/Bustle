@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    {% if product.get_product_quantity(g.user) %}
+    {% if g.user and product.get_product_quantity(g.user) %}
     <div class="d-flex justify-content-evenly align-items-center my-2">
         <button class="btn btn-outline-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
             data-role="decrement">
