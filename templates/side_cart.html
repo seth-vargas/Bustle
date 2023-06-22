@@ -1,0 +1,32 @@
+<div class="col-2 d-none d-xl-block">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <h4 class="text-center">My Cart</h4>
+            {% with sum = cart | sum(attribute="price") %}
+            <h6 class="text-center">Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h6>
+            {% endwith %}
+        </li>
+        {% for product, cart_instance in query %}
+        <li class="list-group-item" id="{{ product.id }}">
+            <div class="row">
+                <small>{{ product.title }}</small>
+            </div>
+            <div class="row">
+                {% with price = "%.2f" | format(product.price) %}
+                <small>
+                    <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}"
+                        data-price="{{ product.price }}">
+                        {{ cart_instance.quantity }}
+                    </span> x ${{ price }}
+                </small>
+                <b>${{ "%.2f" | format(cart_instance.quantity | int * price | float) }}</b>
+                {% endwith %}
+            </div>
+        </li>
+        {% endfor %}
+        <div id="cart"></div>
+        <a href="/create-checkout-session"
+            class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
+
+    </ul>
+</div>

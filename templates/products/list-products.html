@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}{% if category %} {{ category }} {% elif search %} Search &#8226; {{ search }} {% else %} Products {%
-endif %}{% endblock %}
+{% block title %}
+{% if category %} {{ category }} 
+{% elif search %} Search &#8226; {{ search }} 
+{% else %} Products 
+{% endif %}
+{% endblock %}
 
 {% block content %}
+
 <div class="row mt-3">
     <div class="col">
         {% include "breadcrumb.html" %}
@@ -15,97 +20,20 @@ endif %}{% endblock %}
         {% include "sort.html" %}
     </div>
 </div>
+
 <div class="row">
     {% if g.user %}
-    <div class="col-2 d-none d-xl-block">
-        <ul class="list-group">
-            <li class="list-group-item">
-                <h4 class="text-center">My Cart</h4>
-                {% with sum = cart | sum(attribute="price") %}
-                <h6 class="text-center">Total: <span id="total">{{ "$%.2f" | format(sum) }}</span></h6>
-                {% endwith %}
-            </li>
-            {% for product, cart_instance in query %}
-            <li class="list-group-item" id="{{ product.id }}">
-                <div class="row">
-                    <small>{{ product.title }}</small>
-                </div>
-                <div class="row">
-                    {% with price = "%.2f" | format(product.price) %}
-                    <small>
-                        <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}"
-                            data-price="{{ product.price }}">
-                            {{ cart_instance.quantity }}
-                        </span> x ${{ price }}
-                    </small>
-                    <b>${{ "%.2f" | format(cart_instance.quantity | int * price | float) }}</b>
-                    {% endwith %}
-                </div>
-            </li>
-            {% endfor %}
-            <div id="cart"></div>
-            <a href="/create-checkout-session"
-                class="list-group-item list-group-item-action text-bg-primary p-3">Checkout</a>
-
-        </ul>
-    </div>
+        {% include "side_cart.html" %}
     {% endif %}
-
     <div class="col">
         <div class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product, cart_instance in products.items %}
-
-            <div class="col">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <img src="{{ product.image }}"
-                            class="card-img-top mx-auto d-block object-fit-contain border rounded"
-                            style="height: 20rem">
-                        <p class="card-text">{{ product.title }}</p>
-                        <a href="/products/{{ product.id }}" class="stretched-link"></a>
-                        <h5 class="card-title">
-                            <div class="d-flex justify-content-between">
-                                ${{ "%.2f" | format(product.price) }}
-                                <span>
-                                    {{ product.rating }}<i class="fa-solid fa-star" style="color: #ffed29;"></i>
-                                </span>
-                            </div>
-                        </h5>
-                    </div>
-                </div>
-
-                {% if (product, cart_instance) in query %}
-                <div class="d-flex justify-content-evenly align-items-center my-2">
-                    <button class="btn btn-outline-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
-                        data-role="decrement">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-
-                    <small><span id="qty-{{ product.id }}-card">{{ cart_instance.quantity }} </span> in cart</small>
-
-                    <button class="btn btn-outline-success increment" data-id="{{ product.id }}" data-func="updateCart"
-                        data-role="increment">
-                        <i class="fa-solid fa-plus"></i></button>
-                </div>
-                {% else %}
-                <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="{{ product.id }}" method="post">
-                    <button class="btn btn-outline-dark">Add to cart</button>
-                </form>
-                {% endif %}
-
-                <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="{{ product.id }}"
-                    method="post" data-instructions="post">
-                    {% if product in g.user.favorites %}
-                    <button class="btn btn-outline-success disabled">Already in your favorites!</button>
-                    {% else %}
-                    <button class="btn btn-outline-dark">Add to favorites</button>
-                    {% endif %}
-                </form>
-            </div>
+            {% include "product_cart.html" %}
             {%endfor%}
         </div>
     </div>
 </div>
+
 <div class="row">
     {% include "paginate.html" %}
 </div>
