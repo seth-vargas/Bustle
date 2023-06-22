@@ -1,5 +1,5 @@
 from flask import render_template, g, request
-from general.models import Product, User, Cart, deslugify, get_categories, get_query
+from general.models import Product, User, Cart, deslugify, get_categories
 from app import app, db
 
 
@@ -13,14 +13,15 @@ def show_all_products():
     search = request.args.get("search")
     page = request.args.get("page", 1, type=int)
     sort_by = request.args.get("sort_by")
-    ordered_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.id)
+    # ordered_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id).order_by(Product.id)
+    ordered_query = Product.query.order_by(Product.id)
 
     if g.user:
         query = g.user.get_cart()
     else:
         query = []
 
-    ordered_query = get_query(sort_by)
+    # ordered_query = get_query(sort_by)
 
     if not search:
         products = ordered_query.paginate(

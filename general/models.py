@@ -125,6 +125,14 @@ class Product(db.Model):
     rating = db.Column(db.Float, nullable=False, default=0)
     rate_count = db.Column(db.Integer, nullable=False, default=0)
 
+    def get_product_quantity(self, user):
+        """ Returns an INT value representing the quantity of a given item in the users cart """
+        
+        # product = cls.query.get(self.id)
+        quantity =  db.session.query(Cart.quantity).filter(Cart.prod_id == self.id, Cart.user_id == user.id).scalar()
+
+        return quantity
+
     def slugify(self):
         """ turns sloppy plain text into URL friendly route """
 
@@ -155,25 +163,25 @@ def connect_db(app):
     db.init_app(app)
 
 
-def get_query(sort_by, category=None):
-    base_query = db.session.query(Product, Cart).outerjoin(
-        Cart, Cart.prod_id == Product.id)
+# def get_query(sort_by, category=None):
+#     base_query = db.session.query(Product, Cart).outerjoin(
+#         Cart, Cart.prod_id == Product.id)
 
-    if category != None:
-        base_query = base_query.filter(Product.category == category)
+#     if category != None:
+#         base_query = base_query.filter(Product.category == category)
 
-    ordered_query = base_query.order_by(Product.id)
+#     ordered_query = base_query.order_by(Product.id)
 
-    if sort_by == "A-Z":
-        ordered_query = base_query.order_by(Product.title)
+#     if sort_by == "A-Z":
+#         ordered_query = base_query.order_by(Product.title)
 
-    elif sort_by == "Z-A":
-        ordered_query = base_query.order_by(Product.title.desc())
+#     elif sort_by == "Z-A":
+#         ordered_query = base_query.order_by(Product.title.desc())
 
-    elif sort_by == "Low-High":
-        ordered_query = base_query.order_by(Product.price)
+#     elif sort_by == "Low-High":
+#         ordered_query = base_query.order_by(Product.price)
 
-    elif sort_by == "High-Low":
-        ordered_query = base_query.order_by(Product.price.desc())
+#     elif sort_by == "High-Low":
+#         ordered_query = base_query.order_by(Product.price.desc())
 
-    return ordered_query
+#     return ordered_query

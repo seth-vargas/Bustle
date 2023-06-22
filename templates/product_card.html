@@ -17,14 +17,14 @@
         </div>
     </div>
 
-    {% if (product, cart_instance) in query %}
+    {% if product.get_product_quantity(g.user) %}
     <div class="d-flex justify-content-evenly align-items-center my-2">
         <button class="btn btn-outline-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
             data-role="decrement">
             <i class="fa-solid fa-minus"></i>
         </button>
 
-        <small><span id="qty-{{ product.id }}-card">{{ cart_instance.quantity }} </span> in cart</small>
+        <small><span id="qty-{{ product.id }}-card">{{ product.get_product_quantity(g.user) }} </span> in cart</small>
 
         <button class="btn btn-outline-success increment" data-id="{{ product.id }}" data-func="updateCart"
             data-role="increment">
