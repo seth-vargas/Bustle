@@ -14,8 +14,7 @@
             <div class="row">
                 {% with price = "%.2f" | format(product.price) %}
                 <small>
-                    <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}"
-                        data-price="{{ product.price }}">
+                    <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}" data-price="{{ product.price }}">
                         {{ cart_instance.quantity }}
                     </span> x ${{ price }}
                 </small>
@@ -25,6 +24,8 @@
         </li>
         {% endfor %}
         <div id="cart"></div>
-        {% include "checkout.html" %}
+        <li class="list-group-item list-group-item-action text-bg-primary p-3 text-center">
+            {% include "checkout.html" %}
+        </li>
     </ul>
 </div>

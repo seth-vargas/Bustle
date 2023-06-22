@@ -46,8 +46,6 @@ class User(db.Model):
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     num_items_in_cart = db.Column(db.Integer, nullable=False, default=0)
-    cart_total_price = db.Column(db.Float, nullable=False, default=0)
-    # cart = db.relationship("Product", secondary="cart", lazy="joined")
     cart = db.relationship("Cart", lazy="joined", backref="user")
     favorites = db.relationship(
         "Product", secondary="favorites", lazy="joined")
@@ -116,6 +114,40 @@ class User(db.Model):
 
         return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id).scalar() or 0
 
+    def get_line_items(self):
+        """ Returns a LIST of DICTS that are present in the users cart """
+
+        line_items = []
+
+        for product, cart_instance in self.get_cart().all():
+            line_items.append({
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'name': product.title,
+                    'images': [product.image]
+                },
+                'unit_amount': product.price * 100,
+            },
+            'quantity': cart_instance.quantity,
+        })        
+        
+        return line_items
+
+
+    def made_purchase(self):
+        """ Upon a successful purchase, reset this users cart and num_items_in_cart """
+
+        for p, instance in self.get_cart().all():
+            db.session.delete(instance)
+
+        self.num_items_in_cart = 0
+
+        db.session.add(self)
+        db.session.commit()
+
+        return
+
 
 class Product(db.Model):
     """ Product Model """
@@ -167,27 +199,3 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
-
-
-# def get_query(sort_by, category=None):
-#     base_query = db.session.query(Product, Cart).outerjoin(
-#         Cart, Cart.prod_id == Product.id)
-
-#     if category != None:
-#         base_query = base_query.filter(Product.category == category)
-
-#     ordered_query = base_query.order_by(Product.id)
-
-#     if sort_by == "A-Z":
-#         ordered_query = base_query.order_by(Product.title)
-
-#     elif sort_by == "Z-A":
-#         ordered_query = base_query.order_by(Product.title.desc())
-
-#     elif sort_by == "Low-High":
-#         ordered_query = base_query.order_by(Product.price)
-
-#     elif sort_by == "High-Low":
-#         ordered_query = base_query.order_by(Product.price.desc())
-
-#     return ordered_query

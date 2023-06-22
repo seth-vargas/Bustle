@@ -4,6 +4,9 @@ from general.forms import EditUserForm, ChangePasswordForm
 from general.models import Product, User, Cart
 from app import app, db
 
+from general.secrets import stripe_key
+import stripe
+stripe.api_key = stripe_key
 
 @app.route("/my-account")
 def show_account():
@@ -108,7 +111,8 @@ def cart():
 
     if request.method == "GET":
         # query = db.session.query(Product, Cart).join(Cart, Product.id == Cart.prod_id).all()
-        products = Product.query.join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == g.user.id)
+        products = Product.query.join(
+            Cart, Product.id == Cart.prod_id).filter(Cart.user_id == g.user.id)
 
         sub_total = user.get_subtotal()
 
@@ -144,7 +148,7 @@ def cart():
     elif request.method == "PATCH":
         prod_id = request.get_json()["id"]
         role = request.get_json()["role"]
-        
+
         cart_instance = Cart.get_instance(g.user.id, prod_id)
         product = Product.query.get(prod_id)
 
@@ -194,10 +198,10 @@ def remove_from_cart():
         data = {"message": f"Failed to delete."}
 
     data = {
-            "message": f"Deleted {cart_instance}.",
-            "sub_total": g.user.get_subtotal()
-            }   
-    
+        "message": f"Deleted {cart_instance}.",
+        "sub_total": g.user.get_subtotal()
+    }
+
     return jsonify(data)
 
 
@@ -261,3 +265,22 @@ def delete_favorite():
     }
 
     return jsonify({"data": data})
+
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    session = stripe.checkout.Session.create(
+        line_items=g.user.get_line_items(),
+        mode='payment',
+        success_url='http://localhost:5000/success',
+        cancel_url='http://localhost:5000/products',
+    )
+
+    return redirect(session.url, code=303)
+
+
+@app.route("/success")
+def show_success_page():
+    """ Shows a success page when a user purchases a product """
+    g.user.made_purchase()
+    return render_template("success.html")

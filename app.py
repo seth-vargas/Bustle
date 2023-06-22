@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, flash, session, g, request, jsonify, sessions
-import stripe
-from general.secrets import secret_password, stripe_key
+from general.secrets import secret_password
 from general.models import db, connect_db, User
 from general.forms import LoginForm, AddUserForm
 from sqlalchemy.exc import IntegrityError
@@ -16,7 +15,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 app.config["SECRET_KEY"] = secret_password
 connect_db(app)
-stripe.api_key = stripe_key
 
 import routes.user_routes
 import routes.product_routes
