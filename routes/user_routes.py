@@ -182,7 +182,9 @@ def remove_from_cart():
         return redirect("/login")
 
     prod_id = request.get_json()["id"]
-    cart_instance = Cart.query.filter(Cart.prod_id == prod_id).first()
+    cart_instance = Cart.query.filter(Cart.prod_id == prod_id).all()
+
+    breakpoint()
 
     try:
         g.user.num_items_in_cart -= cart_instance.quantity

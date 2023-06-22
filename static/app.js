@@ -50,7 +50,8 @@ function isUserLoggedIn(response) {
 }
 
 function removeFromTable() {
-  this.closest(".table-row").remove()
+  this.closest(".cart-table-row").remove()
+  postData("/cart/delete", { id: this.dataset.id }, "DELETE");
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with backend requests - - - - - - - - - - - - - - - - - - - - - - -

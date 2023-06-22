@@ -5,30 +5,31 @@
 {% endblock %}
 
 {% block content %}
+
 {% if products.all() | length > 0 %}
+
 <div class="row">
     <h1>Your Cart</h1>
 </div>
+
 <div class="row">
-
-
     <table class="table table-hover mt-5">
-        <thead >
-            <tr>
-                <th scope="col"></th>
+        <thead>
+            <tr class="text-center">
+                <th scope="col">Remove item</th>
                 <th scope="col">Name</th>
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Total</th>
             </tr>
         </thead>
-        <tbody class="table-group-divider">
+        <tbody class="table-group-divider text-center">
             {% for product in products %}
             {% with qty = product.get_product_quantity(g.user) %}
-            <tr>
+            <tr class="cart-table-row">
                 <th scope="row">
                     <span style="cursor: pointer;">
-                        <i class="fa-solid fa-xmark me-4 remove-from-table" data-id="{{ product.id }}"data-price="{{ product.price }}"></i>
+                        <i class="fa-solid fa-xmark me-4 remove-from-table" data-id="{{ product.id }}" data-price="{{ product.price }}"></i>
                     </span>
                 </th>
                 <td>{{ product.title }}</td>
@@ -36,11 +37,10 @@
                 <td>{{ qty }}</td>
                 <td>{{ "$%.2f" | format(product.price * qty ) }}</td>
             </tr>
-            {% endwith %}            
-            {% endfor %}              
+            {% endwith %}
+            {% endfor %}
         </tbody>
     </table>
-
 
     <div class="row">
         <h2>Total: <span id="total" data-sum="{{ total }}">{{ "$%.2f" | format(g.user.get_subtotal()) }}</span></h2>
