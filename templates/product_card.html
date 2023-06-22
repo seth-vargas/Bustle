@@ -24,7 +24,7 @@
             <i class="fa-solid fa-minus"></i>
         </button>
 
-        <small><span id="qty-{{ product.id }}-card">{{ product.get_product_quantity(g.user) }} </span> in cart</small>
+        <small><span id="qty-{{ product.id }}">{{ product.get_product_quantity(g.user) }} </span> in cart</small>
 
         <button class="btn btn-outline-success increment" data-id="{{ product.id }}" data-func="updateCart"
             data-role="increment">

@@ -113,7 +113,6 @@ async function addToCart(e) {
             <i class="fa-solid fa-plus"></i></button>
     </div>
     `;
-
     const cartDiv = document.querySelector("#cart")
     const newLi = document.createElement("li")
     newLi.classList.add("list-group-item")
@@ -124,11 +123,11 @@ async function addToCart(e) {
     </div>
     <div class="row">
       <small>
-        <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${(response.prod_price).toFixed(2)}
+        <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price.toFixed(2)}
       </small>
     </div>
     <div class="row">
-      <b>${(response.prod_price).toFixed(2)}</b>
+      <b>${response.prod_price.toFixed(2)}</b>
     </div>
   `
     cartDiv.append(newLi)
@@ -140,32 +139,42 @@ async function addToCart(e) {
 async function updateCart() {
 
   console.log("IN updateCart")
-
+  
   const response = await editData("/cart", {
     id: this.dataset.id,
     func: this.dataset.func,
     role: this.dataset.role,
   });
 
+  
   const cartBubble = document.querySelector("#cart-count")
-  const cartQuantity = document.querySelector(`#qty-${this.dataset.id}-cart`);
-  const cardQuantity = document.querySelector(`#qty-${this.dataset.id}-card`);
-
-  cartQuantity.innerText = `${response.qty} `
+  const qtyElements = document.querySelectorAll(`#qty-${this.dataset.id}`)
+  
   cartBubble.innerText = response.num_items_in_cart
-  cardQuantity.innerText = `${response.qty} `
+  qtyElements.forEach((element) => {
+    element.innerText = `${response.qty} `
+  })
 
   if (response.qty <= 0) {
-    const cartLi = document.querySelector(`#${this.dataset.id}`)
-    const postForm = this.parentElement
 
-    cartLi.remove()
-    postForm.outerHTML = `
-    <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="${this.dataset.id}" method="post">
-    <button class="btn btn-outline-dark">Add to cart</button>
-    </form>
-    `;
-    postData("/cart/delete", { id: this.dataset.id }, "DELETE");
+    const url = document.location.href
+    if (url.endsWith("/cart")) {
+      const row = this.closest(".cart-table-row")
+      row.remove()
+    } else {
+      const cartLi = document.querySelector(`#${this.dataset.id}`)
+      const postForm = this.parentElement
+  
+      cartLi.remove()
+      postForm.outerHTML = `
+      <form action="/cart" class="d-grid mx-auto my-2 add-to-cart" data-id="${this.dataset.id}" method="post">
+      <button class="btn btn-outline-dark">Add to cart</button>
+      </form>
+      `;
+    }
+    const response = await postData("/cart/delete", { id: this.dataset.id }, "DELETE");
+    console.log(response)
+    console.log(this.dataset.id)
   }
 }
 

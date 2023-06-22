@@ -182,14 +182,15 @@ def remove_from_cart():
         return redirect("/login")
 
     prod_id = request.get_json()["id"]
-    cart_instance = Cart.query.filter(Cart.prod_id == prod_id).all()
-
-    breakpoint()
+    cart_instance = Cart.query.filter(Cart.prod_id == prod_id, Cart.user_id == g.user.id).one()
 
     try:
         g.user.num_items_in_cart -= cart_instance.quantity
     except:
-        return jsonify({"message": "Cart instance does not exist."})
+        return jsonify({
+            "message": "Something went wrong when querying Cart",
+            "query_response": cart_instance
+        })
 
     try:
         db.session.delete(cart_instance)

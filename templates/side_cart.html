@@ -14,7 +14,7 @@
             <div class="row">
                 {% with price = "%.2f" | format(product.price) %}
                 <small>
-                    <span id="qty-{{ product.id }}-cart" data-id="{{ product.id }}" data-price="{{ product.price }}">
+                    <span id="qty-{{ product.id }}" data-id="{{ product.id }}" data-price="{{ product.price }}">
                         {{ cart_instance.quantity }}
                     </span> x ${{ price }}
                 </small>

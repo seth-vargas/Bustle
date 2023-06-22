@@ -16,7 +16,7 @@
     <table class="table table-hover mt-5">
         <thead>
             <tr class="text-center">
-                <th scope="col">Remove item</th>
+                <th scope="col">Update Qty</th>
                 <th scope="col">Name</th>
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
@@ -25,19 +25,26 @@
         </thead>
         <tbody class="table-group-divider text-center">
             {% for product in products %}
-            {% with qty = product.get_product_quantity(g.user) %}
             <tr class="cart-table-row">
                 <th scope="row">
-                    <span style="cursor: pointer;">
-                        <i class="fa-solid fa-xmark me-4 remove-from-table" data-id="{{ product.id }}" data-price="{{ product.price }}"></i>
-                    </span>
+                    <div>
+                        <button class="btn btn-outline-dark btn-sm decrement" data-id="{{ product.id }}"
+                            data-func="updateCart" data-role="decrement">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <button class="btn btn-outline-dark btn-sm increment" data-id="{{ product.id }}"
+                            data-func="updateCart" data-role="increment">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
                 </th>
                 <td>{{ product.title }}</td>
+                {% with qty = product.get_product_quantity(g.user) %}
                 <td>{{ "$%.2f" | format(product.price) }}</td>
-                <td>{{ qty }}</td>
+                <td><span id="qty-{{ product.id }}">{{ qty }}</span></td>
                 <td>{{ "$%.2f" | format(product.price * qty ) }}</td>
+                {% endwith %}
             </tr>
-            {% endwith %}
             {% endfor %}
         </tbody>
     </table>
@@ -52,6 +59,5 @@
     <h1>You have nothing in your cart! <a href="/products">Start shopping</a></h1>
 
     {% endif %}
-
 </div>
 {% endblock %}
