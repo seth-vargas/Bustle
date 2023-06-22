@@ -13,6 +13,7 @@ $(document).on("click", ".remove-from-favorites", removeFromFavorites);
 $(document).on("click", ".decrement", updateCart);
 $(document).on("click", ".increment", updateCart);
 $(document).on("click", ".remove-from-cart", removeFromCart);
+$(document).on("click", ".remove-from-table", removeFromTable);
 $(document).on("click", ".btn-close", closeFlashedMessage);
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Helper functions  - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,6 +47,10 @@ function isUserLoggedIn(response) {
     return false;
   }
   return true;
+}
+
+function removeFromTable() {
+  this.closest(".table-row").remove()
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with backend requests - - - - - - - - - - - - - - - - - - - - - - -
