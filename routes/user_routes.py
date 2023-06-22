@@ -1,7 +1,7 @@
 from flask import render_template, redirect, flash, session, g, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from general.forms import EditUserForm, ChangePasswordForm
-from general.models import Product, User, Cart, get_users_cart, get_total
+from general.models import Product, User, Cart
 from app import app, db
 
 
@@ -109,9 +109,9 @@ def cart():
     if request.method == "GET":
         query = db.session.query(Product, Cart).join(
             Cart, Product.id == Cart.prod_id).all()
-        total = get_total(user)
+        sub_total = user.get_subtotal()
 
-        return render_template("cart.html", user=user, query=query, total=total)
+        return render_template("cart.html", user=user, query=query, total=sub_total)
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]

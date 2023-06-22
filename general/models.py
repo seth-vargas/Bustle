@@ -22,7 +22,6 @@ class Cart(db.Model):
         self.prod_id = prod_id
 
 
-
 favorites_table = db.Table(
     "favorites",
     db.Column("user_id", db.ForeignKey("users.id", ondelete="CASCADE")),
@@ -91,13 +90,14 @@ class User(db.Model):
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    
     def get_num_items_in_cart(self):
-            return db.session.query(func.sum(Cart.quantity)).filter(User.id == self.id).scalar() or 0
+        return db.session.query(func.sum(Cart.quantity)).filter(Cart.user_id == self.id).scalar() or 0
 
-    
     def get_cart(self):
-        return db.session.query(Product, Cart).join(Cart, Product.id == Cart.prod_id).all()
+        return db.session.query(Product, Cart).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id)
+
+    def get_subtotal(self):
+        return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id).scalar() or 0
 
 
 class Product(db.Model):
@@ -144,15 +144,9 @@ def connect_db(app):
     db.init_app(app)
 
 
-def get_users_cart(user):
-    return db.session.query(Product).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).all()
-
-
-def get_total(user):
-    return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).join(User, Cart.user_id == user.id).filter(User.id == user.id).scalar() or 0
-
 def get_query(sort_by, category=None):
-    base_query = db.session.query(Product, Cart).outerjoin(Cart, Cart.prod_id == Product.id)
+    base_query = db.session.query(Product, Cart).outerjoin(
+        Cart, Cart.prod_id == Product.id)
 
     if category != None:
         base_query = base_query.filter(Product.category == category)
@@ -164,10 +158,10 @@ def get_query(sort_by, category=None):
 
     elif sort_by == "Z-A":
         ordered_query = base_query.order_by(Product.title.desc())
-    
+
     elif sort_by == "Low-High":
         ordered_query = base_query.order_by(Product.price)
-    
+
     elif sort_by == "High-Low":
         ordered_query = base_query.order_by(Product.price.desc())
 
