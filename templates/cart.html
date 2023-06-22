@@ -10,7 +10,7 @@
 </div>
 <div class="row">
     <ul>
-        {% for product, cart_instance in query %}
+        {% for product in products %}
         <div class="row m-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -24,8 +24,8 @@
                 <div>
                     {% with price = "%.2f" | format(product.price) %}
                     <small><span id="qty-{{ product.id }}" data-id="{{ product.id }}"
-                            data-price="{{ product.price }}">{{ cart_instance.quantity }}</span> x ${{ price }}</small>
-                    <b>${{ "%.2f" | format(cart_instance.quantity | int * price | float) }}</b>
+                            data-price="{{ product.price }}">{{ product.get_product_quantity(g.user) }}</span> x ${{ price }}</small>
+                    <b>${{ "%.2f" | format(product.get_product_quantity(g.user) | int * price | float) }}</b>
                     {% endwith %}
                 </div>
             </div>

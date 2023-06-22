@@ -107,11 +107,12 @@ def cart():
     user = User.query.get_or_404(g.user.id)
 
     if request.method == "GET":
-        query = db.session.query(Product, Cart).join(
-            Cart, Product.id == Cart.prod_id).all()
+        # query = db.session.query(Product, Cart).join(Cart, Product.id == Cart.prod_id).all()
+        products = Product.query.join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == g.user.id)
+
         sub_total = user.get_subtotal()
 
-        return render_template("cart.html", user=user, query=query, total=sub_total)
+        return render_template("cart.html", user=user, products=products, total=sub_total)
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]
