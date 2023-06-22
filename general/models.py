@@ -21,6 +21,12 @@ class Cart(db.Model):
         self.user_id = user_id
         self.prod_id = prod_id
 
+    @classmethod
+    def get_instance(cls, user):
+        """ Returns one Cart object in the logged-in users cart """
+
+        return db.session.query(Cart).join(Product, Cart.prod_id == Product.id).filter(Cart.user_id == user.id).one()
+
 
 favorites_table = db.Table(
     "favorites",

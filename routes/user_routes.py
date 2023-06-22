@@ -144,7 +144,8 @@ def cart():
     elif request.method == "PATCH":
         prod_id = request.get_json()["id"]
         role = request.get_json()["role"]
-        cart_instance = Cart.query.filter(Cart.prod_id == prod_id).one()
+        
+        cart_instance = Cart.get_instance(g.user)
         product = Product.query.get(prod_id)
 
         if role == "increment":
