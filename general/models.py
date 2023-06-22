@@ -88,15 +88,26 @@ class User(db.Model):
         return user
 
     def get_full_name(self):
+        """ Gets logged-in users first and last name """
+
         return f"{self.first_name} {self.last_name}"
 
     def get_num_items_in_cart(self):
+        """ Returns an INT value of the number of items the logged-in user has in their cart """
+
         return db.session.query(func.sum(Cart.quantity)).filter(Cart.user_id == self.id).scalar() or 0
 
     def get_cart(self):
+        """ 
+        Returns a LIST of TUPLES, where each tuple contains (<Product>, <Cart>) objects.
+        The list is filtered to contain tuples that have a relationship with the logged-in user.
+        """
+
         return db.session.query(Product, Cart).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id)
 
     def get_subtotal(self):
+        """ Returns an INT value of the total price of the logged-in users cart """
+
         return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id).scalar() or 0
 
 
