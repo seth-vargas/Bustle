@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Your Favorites{% endblock %}
+
+{% block content %}
+
+{% if favorites | length <= 0 %}
+<div class="row mt-3">
+    <h1 class="text-center">You have nothing in your favorites. <a href="/products">Go add some</a></h1>
+</div>
+{% else %}
+
+<div class="row mt-3">
+    <h1 class="text-center">My Favorited Items</h1>
+</div>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for product in favorites %}
+    {% include "products/card.html" %}
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

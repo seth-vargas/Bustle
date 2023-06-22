@@ -8,8 +8,8 @@
 
 {% if products.all() | length > 0 %}
 
-<div class="row">
-    <h1>Your Cart</h1>
+<div class="row mt-3">
+    <h1 class="text-center">My Shopping Cart</h1>
 </div>
 
 <div class="row">
@@ -51,7 +51,7 @@
 
     <div class="row">
         <h2>Total: <span id="total" data-sum="{{ total }}">{{ "$%.2f" | format(g.user.get_subtotal()) }}</span></h2>
-        {% include "checkout.html" %}
+        {% include "users/checkout.html" %}
     </div>
 
     {% else %}

@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<div class="row">
-        <h1>My Account</h1>
+<div class="row mt-3">
+    <h1 class="text-center">My Account</h1>
 </div>
 
 <div class="row">
@@ -24,7 +24,8 @@
                     <p class="card-text">{{ user.get_full_name() }}</p>
                     <p class="card-text">{{ user.email }}</p>
                     <p class="card-text">
-                        <a href="/my-account/change-password">Change password</a> | <a href="/my-account/edit">Edit account</a>
+                        <a href="/my-account/change-password">Change password</a> | <a href="/my-account/edit">Edit
+                            account</a>
                     </p>
                 </div>
             </div>

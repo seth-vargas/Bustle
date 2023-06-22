@@ -217,7 +217,7 @@ async function addToFavorites(e) {
     instructions
   );
   const data = response["data"];
-
+    
   if (isUserLoggedIn(data)) {
     const method = response["data"]["method"];
     const element = this;

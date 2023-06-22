@@ -11,31 +11,31 @@
 
 <div class="row mt-3">
     <div class="col">
-        {% include "breadcrumb.html" %}
+        {% include "products/breadcrumb.html" %}
     </div>
     <div class="col">
-        {% include "paginate.html" %}
+        {% include "products/paginate.html" %}
     </div>
     <div class="col text-end">
-        {% include "sort.html" %}
+        {% include "products/sort.html" %}
     </div>
 </div>
 
 <div class="row">
     {% if g.user %}
-        {% include "side_cart.html" %}
+        {% include "products/cart.html" %}
     {% endif %}
     <div class="col">
         <div class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product in products.items %}
-            {% include "product_card.html" %}
+            {% include "products/card.html" %}
             {%endfor%}
         </div>
     </div>
 </div>
 
 <div class="row">
-    {% include "paginate.html" %}
+    {% include "products/paginate.html" %}
 </div>
 
 {% endblock %}

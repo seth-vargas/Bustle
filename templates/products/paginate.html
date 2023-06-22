@@ -3,12 +3,12 @@
         {% for page_num in products.iter_pages() %}
         {% if products.page == page_num %}
         <li class="page-item disabled">
-            <a href="{{ url_for('show_all_products', page=page_num) }}" class="page-link">{{
+            <a href="{{ url_for('show_all_products', page=page_num, sort_by=sort_by) }}" class="page-link">{{
                 page_num }}</a>
         </li>
         {% else %}
         <li class="page-item">
-            <a href="{{ url_for('show_all_products', page=page_num) }}" class="page-link">
+            <a href="{{ url_for('show_all_products', page=page_num, sort_by=sort_by) }}" class="page-link">
                 {{ page_num}}
             </a>
         </li>

@@ -13,7 +13,7 @@ def show_account():
     """ Shows the account of the logged in user. If not logged in, redirects to home """
     if g.user:
         user = User.query.get_or_404(g.user.id)
-        return render_template("account.html", user=user)
+        return render_template("users/account.html", user=user)
     else:
         return redirect("/login")
 
@@ -116,7 +116,7 @@ def cart():
 
         sub_total = user.get_subtotal()
 
-        return render_template("cart.html", user=user, products=products, total=sub_total)
+        return render_template("users/cart.html", user=user, products=products, total=sub_total)
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]
@@ -237,7 +237,8 @@ def show_favorites():
 
     elif request.method == "GET":
         favorites = user.favorites
-        return render_template("favorites.html", favorites=favorites)
+        
+        return render_template("users/favorites.html", favorites=favorites)
 
     else:
         return render_template("invalid-method.html")
