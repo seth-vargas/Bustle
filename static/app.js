@@ -118,7 +118,7 @@ async function addToCart(e) {
     </div>
     <div class="row">
       <small>
-        <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price.toFixed(2)}
+        <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${(response.prod_price).toFixed(2)}
       </small>
     </div>
     <div class="row">
@@ -173,20 +173,20 @@ async function removeFromCart() {
 
   // update total
   const total = document.querySelector("#total");
-  const newSum = (total.dataset.sum - response["price"]).toFixed(2)
+  const newSum = response["sub_total"].toFixed(2)
   total.textContent = `$${newSum}`;
   total.dataset.sum = newSum
 
   const cartBubble = document.querySelector("#cart-count")
-  cartBubble.innerText = data["count_products_in_cart"]
+  cartBubble.innerText = response["count_products_in_cart"]
 
-  // update el on DOM
-  const qty = document.querySelector(`#qty-${this.dataset.id}-card`)
-  qty.innerText = `${data.qty} `;
-
-  if (data["qty"] === 0) {
+  if (!response.qty || response.qty === 0) {
+    // Remove row from DOM
     this.closest(".row").remove()
-    return
+  } else {
+    // update el on DOM
+    const qty = document.querySelector(`#qty-${this.dataset.id}-card`)
+    qty.innerText = `${response.qty} `;
   }
 }
 

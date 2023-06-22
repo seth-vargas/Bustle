@@ -145,7 +145,7 @@ def cart():
         prod_id = request.get_json()["id"]
         role = request.get_json()["role"]
         
-        cart_instance = Cart.get_instance(g.user)
+        cart_instance = Cart.get_instance(g.user.id, prod_id)
         product = Product.query.get(prod_id)
 
         if role == "increment":
@@ -167,6 +167,7 @@ def cart():
             "prod_title": product.title,
             "num_items_in_cart": user.get_num_items_in_cart()
         }
+
         return jsonify(data)
 
 
@@ -187,11 +188,15 @@ def remove_from_cart():
     try:
         db.session.delete(cart_instance)
         db.session.commit()
-        data = {"message": f"Deleted {cart_instance}.",}
 
     except:
         db.session.rollback()
-        return jsonify({"message": f"Failed to delete."})
+        data = {"message": f"Failed to delete."}
+
+    data = {
+            "message": f"Deleted {cart_instance}.",
+            "sub_total": g.user.get_subtotal()
+            }   
     
     return jsonify(data)
 
