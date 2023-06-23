@@ -22,6 +22,15 @@ function closeFlashedMessage() {
   this.parentElement.remove();
 }
 
+// TODO Remove flashed messages after 5 seconds if the user does not click on the "X" 
+function autoCloseFlashedMessage() {
+  // Grab the element
+
+  // Set Timeout for 5000 ms 
+
+  // at end of timeout, remove flashed message
+}
+
 // - - - - - - - - - - - - - - - - - - - - - - -  Making HTML updates - - - - - - - - - - - - - - - - - - - - - - -
 
 function updateHtmlOnFavoritestUpdate(method, element) {
@@ -240,6 +249,3 @@ async function removeFromFavorites(e) {
 
   updateHtmlOnFavoritestUpdate(method, element);
 }
-
-
-// TODO Remove flashed messages after 5 seconds if the user does not click on the "X" 
