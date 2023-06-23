@@ -26,7 +26,8 @@ function closeFlashedMessage() {
 
 function updateHtmlOnFavoritestUpdate(method, element) {
   if (method === "POST") {
-    element.innerHTML = `<button class="btn btn-outline-success disabled">Added to favorites!</button>`;
+    // element.innerHTML = `<button class="btn btn-outline-success disabled">Added to favorites!</button>`;
+
   } else {
     element.remove();
   }
@@ -234,8 +235,11 @@ async function removeFromFavorites(e) {
     "DELETE"
   );
 
-  const method = response["data"]["method"];
-  const element = this.closest(".col-sm-3");
+  const method = "DELETE";
+  const element = this.closest(".");
 
   updateHtmlOnFavoritestUpdate(method, element);
 }
+
+
+// TODO Remove flashed messages after 5 seconds if the user does not click on the "X" 
