@@ -9,7 +9,7 @@
         {% for product, cart_instance in query %}
         <li class="list-group-item" id="{{ product.id }}">
             <div class="row">
-                <small>{{ product.title }}</small>
+                <small><a href="{{url_for('show_product', id=product.id)}}">{{ product.title }}</a></small>
             </div>
             <div class="row">
                 {% with price = "%.2f" | format(product.price) %}
