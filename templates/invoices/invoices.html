@@ -4,13 +4,13 @@
 
 {% block content %}
 <div class="row mt-3">
-    <h1>My Orders</h1>
+    <h1 class="text-center">My Orders</h1>
 </div>
 <div class="row">
     {% if orders %}
 
     {% else %}
-    <h3>You have no orders yet, <a href="url_for('show_all_products')">go shopping!</a></h3>
+    <h3>You have no orders yet, <a href="{{url_for('show_all_products')}}">go shopping!</a></h3>
     {% endif %}
 </div>
 {% endblock %}

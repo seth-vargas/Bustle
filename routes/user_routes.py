@@ -278,6 +278,8 @@ def show_purchases():
     # TODO show invoices as a list
     # TODO return list and render template
 
+    return render_template("invoices/invoices.html")
+
 # TODO implement viewing an instance of a users invoice
 @app.route("/purchases/<invoice_id>")
 def show_invoice(invoice_id):
