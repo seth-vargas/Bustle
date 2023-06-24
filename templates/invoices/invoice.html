@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}
+Invoice
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <h1 class="text-center">
+        Order 123456
+    </h1>
+</div>
+
+<div class="row">
+    <table class="table table-hover mt-5">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider text-center">
+            <tr class="cart-table-row">
+                <th scope="row">A purchase</th>
+                <td> {{"$%.2f" | format(12.99)}} </td>
+                <td><span id="qty- 2 "> 2 </span></td>
+                <td> {{"$%.2f" | format(12.99 * 2 )}} </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
