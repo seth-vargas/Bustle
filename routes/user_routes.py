@@ -271,6 +271,22 @@ def delete_favorite():
     return jsonify({"data": data})
 
 
+@app.route("/purchases")
+def show_purchases():
+    """ Shows a list of the logged-in users previous purchases """
+    # TODO retreive a list of invoices
+    # TODO show invoices as a list
+    # TODO return list and render template
+
+# TODO implement viewing an instance of a users invoice
+@app.route("/purchases/<invoice_id>")
+def show_invoice(invoice_id):
+    """ Shows an invoice from the logged-in users invoice list """
+
+    # invoice = Invoice.query.get(invoice_id) # Get invoice from Invoice model
+
+    return render_template("invoices/invoice.html")
+
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     session = stripe.checkout.Session.create(
