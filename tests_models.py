@@ -1,4 +1,3 @@
-from app import app  # Must go after database_uri has been set
 import os
 from unittest import TestCase
 from general.models import db, User, Product, Cart
@@ -9,6 +8,7 @@ from general.secrets import stripe_key
 stripe.api_key = stripe_key
 
 os.environ['DATABASE_URL'] = "postgresql:///capstone-test"
+from app import app  # Must go after database_uri has been set
 
 
 db.drop_all()
