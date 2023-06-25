@@ -155,9 +155,9 @@ class Product(db.Model):
     __tablename__ = "products"
 
     id = db.Column(db.Text, primary_key=True)
-    title = db.Column(db.Text, nullable=False)
-    image = db.Column(db.Text, nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False, default="Coming soon!")
+    image = db.Column(db.Text, nullable=False, default="def-img.url")
+    description = db.Column(db.Text, nullable=False, default="No description provided")
     price = db.Column(db.Integer, nullable=False, default=0)
     category = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=False, default=0)
