@@ -100,12 +100,8 @@ def cart():
     """
 
     if not g.user:
-        data = {
-            "message": "Please log in to interact with your shopping cart",
-            "class": "danger"
-        }
-
-        return jsonify(data)
+        flash("Please log in to view your cart")
+        return redirect("/login")
 
     user = User.query.get_or_404(g.user.id)
 
@@ -117,6 +113,14 @@ def cart():
         sub_total = user.get_subtotal()
 
         return render_template("users/cart.html", user=user, products=products, total=sub_total)
+    
+    if not g.user:
+        data = {
+            "message": "Please log in to interact with your shopping cart",
+            "class": "danger"
+        }
+
+        return jsonify(data)
 
     if request.method == "POST":
         prod_id = request.get_json()["id"]
@@ -211,17 +215,18 @@ def remove_from_cart():
 @app.route("/favorites", methods=["GET", "POST"])
 def show_favorites():
     """ shows user their favorites if logged in """
-
-    if not g.user:
-        data = {
-            "message": "Please log in to interact with your favorites list",
-            "class": "danger"
-        }
-        return jsonify({"data": data})
-
-    user = User.query.get_or_404(g.user.id)
+    
 
     if request.method == "POST":
+        if not g.user:
+            data = {
+                "message": "Please log in to interact with your favorites list",
+                "class": "danger"
+            }
+            return jsonify({"data": data})
+        
+        user = User.query.get_or_404(g.user.id)
+
         prod_id = request.get_json()["id"]
         product = Product.query.get_or_404(prod_id)
 
@@ -236,6 +241,11 @@ def show_favorites():
         return jsonify({"data": data})
 
     elif request.method == "GET":
+        if not g.user:
+            flash("Please log in to view your favorites")
+            return redirect("/login")
+        
+        user = User.query.get_or_404(g.user.id)
         favorites = user.favorites
         
         return render_template("users/favorites.html", favorites=favorites)
