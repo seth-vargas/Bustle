@@ -15,6 +15,7 @@ def show_account():
         user = User.query.get_or_404(g.user.id)
         return render_template("users/account.html", user=user)
     else:
+        flash("Please log in to see your account", "danger")
         return redirect("/login")
 
 
@@ -100,7 +101,7 @@ def cart():
     """
 
     if not g.user:
-        flash("Please log in to view your cart")
+        flash("Please log in to view your cart", "danger")
         return redirect("/login")
 
     user = User.query.get_or_404(g.user.id)
@@ -281,26 +282,34 @@ def delete_favorite():
     return jsonify({"data": data})
 
 
-@app.route("/purchases")
-def show_purchases():
-    """ Shows a list of the logged-in users previous purchases """
-    # TODO retreive a list of invoices
-    # TODO show invoices as a list
-    # TODO return list and render template
+# TODO implement this later!!
 
-    return render_template("invoices/invoices.html")
+# @app.route("/purchases")
+# def show_purchases():
+#     """ Shows a list of the logged-in users previous purchases """
+#     # TODO retreive a list of invoices
+#     # TODO show invoices as a list
+#     # TODO return list and render template
 
-# TODO implement viewing an instance of a users invoice
-@app.route("/purchases/<invoice_id>")
-def show_invoice(invoice_id):
-    """ Shows an invoice from the logged-in users invoice list """
+#     return render_template("invoices/invoices.html")
 
-    # invoice = Invoice.query.get(invoice_id) # Get invoice from Invoice model
+# # TODO implement viewing an instance of a users invoice
+# @app.route("/purchases/<invoice_id>")
+# def show_invoice(invoice_id):
+#     """ Shows an invoice from the logged-in users invoice list """
 
-    return render_template("invoices/invoice.html")
+#     # invoice = Invoice.query.get(invoice_id) # Get invoice from Invoice model
+
+#     return render_template("invoices/invoice.html")
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
+    """ Stripe API """
+
+    if not g.user:
+        flash("Please log in to interact with cart", "danger")
+        return redirect("/login")
+
     session = stripe.checkout.Session.create(
         line_items=g.user.get_line_items(),
         mode='payment',
@@ -313,6 +322,11 @@ def create_checkout_session():
 
 @app.route("/success")
 def show_success_page():
-    """ Shows a success page when a user purchases a product """
+    """ Shows a success page when a user makes a purchase """
+    
+    if not g.user:
+        flash("Please log in to interact with cart", "danger")
+        return redirect("/login")
+
     g.user.made_purchase()
     return render_template("success.html")
