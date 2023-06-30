@@ -125,8 +125,6 @@ def cart():
 
     if request.method == "POST":
 
-        breakpoint()
-
         try:
             prod_id = request.get_json()["id"]
             product = Product.query.get(prod_id)
