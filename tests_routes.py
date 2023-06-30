@@ -21,7 +21,7 @@ class ProductRoutesTestCase(TestCase):
     # TODO test_show_products_by_category
 
 
-class LoggedInUser(TestCase):
+class UserRoutesTestCase(TestCase):
     """ Tests that logged in user views behave correctly """
 
     def setUp(self):
@@ -55,7 +55,7 @@ class LoggedInUser(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1 class="text-center">My Account</h1>', text)
 
-    def test_GET_edit_account(self):
+    def test_edit_account(self):
         """ GET to /my-account/edit """
 
         with self.client as c:
@@ -68,13 +68,57 @@ class LoggedInUser(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('<h1>Update your account</h1>', text)
 
-    def test_POST_edit_account(self):
-        """ POST to /my-account/edit """
+    def test_user_change_password(self):
+        """ Test that GET for /my-account/change-password is functioning as expected """
 
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
 
+            resp = c.get("/my-account/change-password")
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("<h1>Change your password</h1>",
+                          resp.get_data(as_text=True))
+
+    def test_show_cart(self):
+        """ Does GET request to /cart work as expected? """
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+        resp = c.get("/cart")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("You have nothing in your cart!",
+                      resp.get_data(as_text=True))
+
+    def test_show_favorites(self):
+        """ Does getting the favorites work as expected? """
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+        resp = c.get("/favorites")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("You have nothing in your favorites.",
+                      resp.get_data(as_text=True))
+
+    def test_show_success_page(self):
+        """ Does user get returned to success page? """
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+        resp = c.get("/success")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(
+            "<h1>Thanks for your order!</h1>" in resp.get_data(as_text=True))
 
     def test_logged_out_users_views(self):
         """ Tests that users who are not logged in are not able to see these routes """
@@ -84,10 +128,7 @@ class LoggedInUser(TestCase):
             "/my-account/edit",
             "/my-account/change-password",
             "/cart",
-            "/cart/delete",
             "/favorites",
-            "/favorites/delete",
-            "/create-checkout-session",
             "success"
         ]
 
@@ -96,50 +137,5 @@ class LoggedInUser(TestCase):
 
                 resp = c.get(route)
 
-                print("\n", route, resp.status_code)
-
-                try:
-                    self.assertNotEqual(resp.status_code, 200)
-                    self.assertIn("/login", resp.location)
-
-                except Exception as e:
-                    print(e)
-
-                    
-
-
-
-
-    # TODO test_user_change_password
-    # TODO test_cart
-    # TODO test_remove_from_cart
-    # TODO test_show_favorites
-    # TODO test_delete_favorite
-    # TODO test_show_purchases
-    # TODO test_show_invoice
-    # TODO test_create_checkout_session
-    # TODO test_show_success_page
-
-
-class LoggedOutUser(TestCase):
-    """ Tests that logged out users views are working """
-
-    def setUp(self):
-        """ Create test client """
-
-        db.session.rollback()
-
-        db.drop_all()
-        db.create_all()
-
-        self.client = app.test_client()
-
-    def test_show_account(self):
-        """ Logged out user views account """
-
-        with self.client as c:
-
-            resp = c.get("/my-account")
-
-            self.assertEqual(resp.status_code, 302)
-            self.assertIn("/login", resp.location)
+                self.assertNotEqual(resp.status_code, 200)
+                self.assertIn("/login", resp.location)

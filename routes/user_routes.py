@@ -40,7 +40,7 @@ def edit_account():
         else:
             # User is not authenticated, kick them back to the form
             flash("Entered incorrect password", "danger")
-            return render_template("/forms/edit-user.html", form=form)
+            return render_template("/forms/edit-user.html", form=form), 403
         try:
             db.session.add(user)
             db.session.commit()
@@ -75,7 +75,7 @@ def user_change_password():
 
             if password != repeat:
                 flash("Passwords did not match", "danger")
-                return render_template("/forms/change-password.html", form=form)
+                return render_template("/forms/change-password.html", form=form), 403
 
             user.change_password(user.email, password)
 
@@ -124,12 +124,14 @@ def cart():
         return jsonify(data)
 
     if request.method == "POST":
-        prod_id = request.get_json()["id"]
-        product = Product.query.get(prod_id)
-        new_cart_instance = Cart(user_id=user.id, prod_id=prod_id)
-        db.session.add(new_cart_instance)
+
+        breakpoint()
 
         try:
+            prod_id = request.get_json()["id"]
+            product = Product.query.get(prod_id)
+            new_cart_instance = Cart(user_id=user.id, prod_id=prod_id)
+            db.session.add(new_cart_instance)
             db.session.commit()
             user.num_items_in_cart += 1
             data = {
@@ -329,4 +331,4 @@ def show_success_page():
         return redirect("/login")
 
     g.user.made_purchase()
-    return render_template("success.html")
+    return render_template("users/success.html")
