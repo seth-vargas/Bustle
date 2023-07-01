@@ -35,7 +35,7 @@ class Cart(db.Model):
 
         qty = self.quantity
 
-        return format(product.price * qty, ".2f")
+        return product.price * qty
 
 
 favorites_table = db.Table(
@@ -128,7 +128,7 @@ class User(db.Model):
             total = product.price * instance.quantity
             subtotal += total
 
-        return format(subtotal, ".2f")
+        return subtotal
 
 
     def get_line_items(self):

@@ -140,8 +140,8 @@ def cart():
                 "prod_price": product.price,
                 "prod_id": prod_id,
                 "num_items_in_cart": user.get_num_items_in_cart(),
-                "subtotal": user.get_subtotal(),
-                "prodTotal": new_cart_instance.get_price()
+                "subtotal": format(user.get_subtotal(), ".2f"),
+                "prodTotal": format(new_cart_instance.get_price(), ".2f")
             }
 
         except Exception as err:
@@ -178,8 +178,8 @@ def cart():
             "qty": cart_instance.quantity,
             "prod_title": product.title,
             "num_items_in_cart": user.get_num_items_in_cart(),
-            "subtotal": user.get_subtotal(),
-            "prodTotal": cart_instance.get_price()
+            "subtotal": format(user.get_subtotal(), ".2f"),
+            "prodTotal": format(cart_instance.get_price(), ".2f")
         }
 
         return jsonify(data)
