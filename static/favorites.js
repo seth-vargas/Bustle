@@ -40,6 +40,7 @@ function updateHtmlOnFavoritestUpdate(method, element) {
 // - - - - - - - - - - - - - - - - - - - - - - -  Working with favorites - - - - - - - - - - - - - - - - - - - - - - -
 
 async function addToFavorites(e) {
+    console.log("IN addToavorites");
     e.preventDefault();
     const productId = this.dataset.id;
     const instructions = this.method;
@@ -48,16 +49,18 @@ async function addToFavorites(e) {
         { id: productId },
         instructions
     );
-    const data = response["data"];
 
-    if (isUserLoggedIn(data)) {
-        const method = response["data"]["method"];
-        const element = this;
-        updateHtmlOnFavoritestUpdate(method, element);
-    }
+    const favForm = this
+    favForm.innerHTML = `
+    <form action="/favorites/delete" class="d-grid mx-auto my-2 remove-from-favorites" data-id="${this.dataset.id}" method="DELETE">
+        <button class="btn btn-outline-danger">Remove from favorites</button>
+    </form>
+    `
+    favForm.addEventListener("click", removeFromFavorites)
 }
 
 async function removeFromFavorites(e) {
+    console.log("IN removeFromFavorites");
     e.preventDefault();
 
     const response = await postData(
@@ -66,8 +69,17 @@ async function removeFromFavorites(e) {
         "DELETE"
     );
 
-    const method = "DELETE";
-    const element = this.closest(".");
-
-    updateHtmlOnFavoritestUpdate(method, element);
+    const url = document.location.href
+    if (url.endsWith("/favorites")) {
+        const prodCard = this.closest(".col")
+        prodCard.remove()
+    } else {
+        const favForm = this
+        favForm.outerHTML = `
+        <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="${this.dataset.id}" method="post" data-instructions="post">
+            <button class="btn btn-outline-dark">Add to favorites</button>
+        </form>
+        `
+        favForm.addEventListener("click", addToFavorites)
+    }
 }

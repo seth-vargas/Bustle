@@ -229,7 +229,7 @@ def show_favorites():
                 "message": "Please log in to interact with your favorites list",
                 "class": "danger"
             }
-            return jsonify({"data": data})
+            return jsonify(data)
 
         user = User.query.get_or_404(g.user.id)
 
@@ -244,7 +244,7 @@ def show_favorites():
             "method": f"{request.method}"
         }
 
-        return jsonify({"data": data})
+        return jsonify(data)
 
     elif request.method == "GET":
         if not g.user:
@@ -284,7 +284,7 @@ def delete_favorite():
         "method": f"{request.method}"
     }
 
-    return jsonify({"data": data})
+    return jsonify(data)
 
 
 # TODO implement this later!!
