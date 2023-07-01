@@ -26,6 +26,16 @@ class Cart(db.Model):
         """ Returns one Cart object in the logged-in users cart """
 
         return db.session.query(Cart).filter(Cart.user_id == user_id, Cart.prod_id == prod_id).one()
+    
+
+    def get_price(self):
+        """ gets price of Cart instance """
+
+        product = Product.query.get(self.prod_id)
+
+        qty = self.quantity
+
+        return format(product.price * qty, ".2f")
 
 
 favorites_table = db.Table(
@@ -112,7 +122,14 @@ class User(db.Model):
     def get_subtotal(self):
         """ Returns an INT value of the total price of the logged-in users cart """
 
-        return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id).scalar() or 0
+        # return db.session.query(func.sum(Product.price)).join(Cart, Product.id == Cart.prod_id).filter(Cart.user_id == self.id).scalar() or 0
+        subtotal = 0
+        for product, instance in self.get_cart():
+            total = product.price * instance.quantity
+            subtotal += total
+
+        return format(subtotal, ".2f")
+
 
     def get_line_items(self):
         """ Returns a LIST of DICTS that are present in the users cart """

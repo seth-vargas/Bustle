@@ -8,6 +8,7 @@ from general.secrets import stripe_key
 import stripe
 stripe.api_key = stripe_key
 
+
 @app.route("/my-account")
 def show_account():
     """ Shows the account of the logged in user. If not logged in, redirects to home """
@@ -114,7 +115,7 @@ def cart():
         sub_total = user.get_subtotal()
 
         return render_template("users/cart.html", user=user, products=products, total=sub_total)
-    
+
     if not g.user:
         data = {
             "message": "Please log in to interact with your shopping cart",
@@ -138,7 +139,9 @@ def cart():
                 "prod_title": product.title,
                 "prod_price": product.price,
                 "prod_id": prod_id,
-                "num_items_in_cart": user.get_num_items_in_cart()
+                "num_items_in_cart": user.get_num_items_in_cart(),
+                "subtotal": user.get_subtotal(),
+                "prodTotal": new_cart_instance.get_price()
             }
 
         except Exception as err:
@@ -174,7 +177,9 @@ def cart():
             "prod_id": prod_id,
             "qty": cart_instance.quantity,
             "prod_title": product.title,
-            "num_items_in_cart": user.get_num_items_in_cart()
+            "num_items_in_cart": user.get_num_items_in_cart(),
+            "subtotal": user.get_subtotal(),
+            "prodTotal": cart_instance.get_price()
         }
 
         return jsonify(data)
@@ -187,7 +192,8 @@ def remove_from_cart():
         return redirect("/login")
 
     prod_id = request.get_json()["id"]
-    cart_instance = Cart.query.filter(Cart.prod_id == prod_id, Cart.user_id == g.user.id).one()
+    cart_instance = Cart.query.filter(
+        Cart.prod_id == prod_id, Cart.user_id == g.user.id).one()
 
     try:
         g.user.num_items_in_cart -= cart_instance.quantity
@@ -216,7 +222,6 @@ def remove_from_cart():
 @app.route("/favorites", methods=["GET", "POST"])
 def show_favorites():
     """ shows user their favorites if logged in """
-    
 
     if request.method == "POST":
         if not g.user:
@@ -225,7 +230,7 @@ def show_favorites():
                 "class": "danger"
             }
             return jsonify({"data": data})
-        
+
         user = User.query.get_or_404(g.user.id)
 
         prod_id = request.get_json()["id"]
@@ -245,10 +250,10 @@ def show_favorites():
         if not g.user:
             flash("Please log in to view your favorites")
             return redirect("/login")
-        
+
         user = User.query.get_or_404(g.user.id)
         favorites = user.favorites
-        
+
         return render_template("users/favorites.html", favorites=favorites)
 
     else:
@@ -323,7 +328,7 @@ def create_checkout_session():
 @app.route("/success")
 def show_success_page():
     """ Shows a success page when a user makes a purchase """
-    
+
     if not g.user:
         flash("Please log in to interact with cart", "danger")
         return redirect("/login")

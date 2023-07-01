@@ -13,6 +13,8 @@ async function addToCart(e) {
     e.preventDefault();
     const response = await postData(`/cart`, { id: this.dataset.id }, "POST");
 
+    console.log(response)
+
     if (isUserLoggedIn(response)) {
 
         const cartBubble = document.querySelector("#cart-count")
@@ -25,13 +27,13 @@ async function addToCart(e) {
               <i class="fa-solid fa-minus"></i>
           </button>
   
-          <small><span id="qty-${this.dataset.id}-card">1</span> in cart</small>
+          <small><span id="qty-${this.dataset.id}">1</span> in cart</small>
   
-          <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" data-func="updateCart"
-              data-role="increment">
+          <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" data-role="increment">
               <i class="fa-solid fa-plus"></i></button>
       </div>
       `;
+
         const cartDiv = document.querySelector("#cart")
         const newLi = document.createElement("li")
         newLi.classList.add("list-group-item")
@@ -42,11 +44,11 @@ async function addToCart(e) {
       </div>
       <div class="row">
         <small>
-          <span id="qty-${response.prod_id}-cart" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price.toFixed(2)}
+          <span id="qty-${response.prod_id}" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price}
         </small>
       </div>
       <div class="row">
-        <b>${response.prod_price.toFixed(2)}</b>
+        <b id="price-${response.prod_id}">${response.prod_price}</b>
       </div>
     `
         cartDiv.append(newLi)
@@ -61,15 +63,19 @@ async function updateCart() {
 
     const response = await editData("/cart", {
         id: this.dataset.id,
-        func: this.dataset.func,
+        // func: this.dataset.func,
         role: this.dataset.role,
     });
 
 
     const cartBubble = document.querySelector("#cart-count")
     const qtyElements = document.querySelectorAll(`#qty-${this.dataset.id}`)
+    const productTotal = document.querySelector(`#price-${this.dataset.id}`)
+    const subTotal = document.querySelector("#total")
 
     cartBubble.innerText = response.num_items_in_cart
+    productTotal.innerHTML = `$${response.prodTotal}`
+    subTotal.innerHTML = `$${response.subtotal}`
     qtyElements.forEach((element) => {
         element.innerText = `${response.qty} `
     })

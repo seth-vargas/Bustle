@@ -42,7 +42,7 @@
                 {% with qty = product.get_product_quantity(g.user) %}
                 <td>{{ "$%.2f" | format(product.price) }}</td>
                 <td><span id="qty-{{ product.id }}">{{ qty }}</span></td>
-                <td>{{ "$%.2f" | format(product.price * qty ) }}</td>
+                <td id="price-{{ product.id }}">{{ "$%.2f" | format(product.price * qty ) }}</td>
                 {% endwith %}
             </tr>
             {% endfor %}

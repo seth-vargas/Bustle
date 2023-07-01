@@ -18,7 +18,7 @@
                         {{ cart_instance.quantity }}
                     </span> x ${{ price }}
                 </small>
-                <b>${{ "%.2f" | format(cart_instance.quantity | int * price | float) }}</b>
+                <b id="price-{{ product.id }}">${{ cart_instance.get_price() }}</b>
                 {% endwith %}
             </div>
         </li>
