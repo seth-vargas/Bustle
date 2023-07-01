@@ -57,7 +57,7 @@ def show_products_by_category(category):
     else:
         cart = []
 
-    query = Product.query.filter(Product.category == category)
+    query = Product.query.filter(Product.category == deslugify(category))
 
     ordered_query = order_query(query, sort_by)
 

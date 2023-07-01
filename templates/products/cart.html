@@ -2,7 +2,7 @@
     <ul class="list-group">
         <li class="list-group-item">
             <h4 class="text-center">My Cart</h4>
-            <h6 class="text-center">Total: <span id="total">${{ g.user.get_subtotal() }}</span></h6>
+            <h6 class="text-center">Total: <span id="total">${{ "%.2f" | format(g.user.get_subtotal()) }}</span></h6>
         </li>
         {% for product, cart_instance in query %}
         <li class="list-group-item" id="{{ product.id }}">
@@ -16,7 +16,7 @@
                         {{ cart_instance.quantity }}
                     </span> x ${{ price }}
                 </small>
-                <b id="price-{{ product.id }}">${{ cart_instance.get_price() }}</b>
+                <b id="price-{{ product.id }}">${{ "%.2f" | format(cart_instance.get_price()) }}</b>
                 {% endwith %}
             </div>
         </li>

@@ -73,12 +73,12 @@ async function updateCart() {
 
     const cartBubble = document.querySelector("#cart-count")
     const qtyElements = document.querySelectorAll(`#qty-${this.dataset.id}`)
-    const productTotal = document.querySelector(`#price-${this.dataset.id}`)
-    const subTotal = document.querySelector("#total")
+    const productTotal = document.querySelector(`#price-${this.dataset.id}`) || undefined
+    const subTotal = document.querySelector("#total") || undefined
 
     cartBubble.innerText = response.num_items_in_cart
-    productTotal.innerHTML = `$${response.prodTotal}`
-    subTotal.innerHTML = `$${response.subtotal}`
+    productTotal.innerHTML = `$${response.prodTotal}` || undefined
+    subTotal.innerHTML = `$${response.subtotal}` || undefined
     qtyElements.forEach((element) => {
         element.innerText = `${response.qty} `
     })

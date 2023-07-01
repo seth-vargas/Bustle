@@ -204,6 +204,10 @@ def get_categories():
 
     return categories
 
+def slugify(category):
+        """ turns sloppy plain text into URL friendly route """
+
+        return category.replace(" ", "-")
 
 def deslugify(category):
     """ turns URL friendly route into sloppy plain text """
