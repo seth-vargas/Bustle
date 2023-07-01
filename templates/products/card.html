@@ -37,8 +37,12 @@
     {% endif %}
 
     {% if product in g.user.favorites %}
-    <form action="/favorites/delete" class="d-grid mx-auto my-2 remove-from-favorites" data-id="{{ product.id }}" method="DELETE">
+    <!-- TODO implement this!! -->
+    <!-- <form action="/favorites/delete" class="d-grid mx-auto my-2 remove-from-favorites" data-id="{{ product.id }}" method="DELETE">
         <button class="btn btn-outline-danger">Remove from favorites</button>
+    </form> -->
+    <form action="/favorites/delete" class="d-grid mx-auto my-2" data-id="{{ product.id }}" method="DELETE">
+        <button class="btn btn-outline-success disabled">Added to favorites</button>
     </form>
     {% else %}
     <form action="/favorites" class="d-grid mx-auto my-2 add-to-favorites" data-id="{{ product.id }}"
