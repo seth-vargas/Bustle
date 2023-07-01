@@ -38,14 +38,14 @@
                             {% with quantity = session["qty_" + product.id] %}
                 {% if product in g.user.cart and quantity != 0 %}
                 <div class="d-flex justify-content-evenly align-items-center my-2">
-                    <button class="btn btn-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
+                    <button class="btn btn-danger decrement" data-id="{{ product.id }}" 
                         data-role="decrement">
                         <i class="fa-solid fa-minus"></i>
                     </button>
 
                     <small><span id="qty-{{ product.id }}">{{ quantity }} </span>in cart</small>
 
-                    <button class="btn btn-light increment" data-id="{{ product.id }}" data-func="updateCart"
+                    <button class="btn btn-light increment" data-id="{{ product.id }}" 
                         data-role="increment">
                         <i class="fa-solid fa-plus"></i></button>
                 </div>

@@ -22,17 +22,20 @@ async function addToCart(e) {
 
         this.outerHTML = `
       <div class="d-flex justify-content-evenly align-items-center my-2">
-          <button class="btn btn-outline-danger decrement" data-id="${this.dataset.id}" data-func="updateCart"
+          <button class="btn btn-outline-danger decrement" data-id="${this.dataset.id}" 
               data-role="decrement">
               <i class="fa-solid fa-minus"></i>
           </button>
   
           <small><span id="qty-${this.dataset.id}">1</span> in cart</small>
   
-          <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" data-role="increment">
+          <button class="btn btn-outline-success increment" data-id="${this.dataset.id}" 
+              data-role="increment">
               <i class="fa-solid fa-plus"></i></button>
       </div>
       `;
+        const subTotal = document.querySelector("#total")
+        subTotal.innerHTML = `$${response.subtotal}`
 
         const cartDiv = document.querySelector("#cart")
         const newLi = document.createElement("li")
@@ -44,11 +47,11 @@ async function addToCart(e) {
       </div>
       <div class="row">
         <small>
-          <span id="qty-${response.prod_id}" data-id="${response.prod_id}" data-price="${response.prod_price}">1</span> x $${response.prod_price}
+          <span id="qty-${response.prod_id}" data-id="${response.prod_id}" data-price="${response.prodTotal}">1</span> x $${response.prodTotal}
         </small>
       </div>
       <div class="row">
-        <b id="price-${response.prod_id}">${response.prod_price}</b>
+        <b id="price-${response.prod_id}">${response.prodTotal}</b>
       </div>
     `
         cartDiv.append(newLi)

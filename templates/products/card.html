@@ -19,14 +19,14 @@
 
     {% if g.user and product.get_product_quantity(g.user) %}
     <div class="d-flex justify-content-evenly align-items-center my-2">
-        <button class="btn btn-outline-danger decrement" data-id="{{ product.id }}" data-func="updateCart"
+        <button class="btn btn-outline-danger decrement" data-id="{{ product.id }}" 
             data-role="decrement">
             <i class="fa-solid fa-minus"></i>
         </button>
 
         <small><span id="qty-{{ product.id }}">{{ product.get_product_quantity(g.user) }} </span> in cart</small>
 
-        <button class="btn btn-outline-success increment" data-id="{{ product.id }}" data-func="updateCart"
+        <button class="btn btn-outline-success increment" data-id="{{ product.id }}" 
             data-role="increment">
             <i class="fa-solid fa-plus"></i></button>
     </div>
