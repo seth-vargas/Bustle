@@ -2,8 +2,9 @@ from app import db
 from general.models import User, Product, Cart
 import requests
 import stripe
-from general.secrets import stripe_key
-stripe.api_key = stripe_key
+# from general.secrets import stripe_key
+import os
+stripe.api_key = os.environ.get("stripe_key")
 
 
 def setup_db():

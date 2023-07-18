@@ -4,8 +4,8 @@ from general.models import db, User, Product, Cart
 from sqlalchemy.exc import IntegrityError
 
 import stripe
-from general.secrets import stripe_key
-stripe.api_key = stripe_key
+# from general.secrets import stripe_key
+stripe.api_key = os.environ.get("stripe_key")
 
 os.environ['DATABASE_URL'] = "postgresql:///capstone-test"
 from app import app  # Must go after database_uri has been set

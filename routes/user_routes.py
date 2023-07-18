@@ -4,9 +4,10 @@ from general.forms import EditUserForm, ChangePasswordForm
 from general.models import Product, User, Cart
 from app import app, db
 
-from general.secrets import stripe_key
+# from general.secrets import stripe_key
 import stripe
-stripe.api_key = stripe_key
+import os
+stripe.api_key = os.environ.get("stripe_key")
 
 
 @app.route("/my-account")
