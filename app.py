@@ -10,11 +10,11 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("postgres://oyufdgzs:C7AH_stGLcKVCZc-i72udRQhWYg02fUZ@mahmud.db.elephantsql.com/oyufdgzs") or "postgresql:///capstone_db" 
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("postgres://oyufdgzs:C7AH_stGLcKVCZc-i72udRQhWYg02fUZ@mahmud.db.elephantsql.com/oyufdgzs") or "postgresql:///capstone_db" 
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
-app.config["SECRET_KEY"] = secret_password
+# app.config["SECRET_KEY"] = secret_password
 connect_db(app)
 
 import routes.user_routes
