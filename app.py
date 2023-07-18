@@ -14,7 +14,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("postgres://oyufdgzs:C7AH
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
-app.config["SECRET_KEY"] = secret_password or
+app.config["SECRET_KEY"] = secret_password
 connect_db(app)
 
 import routes.user_routes
