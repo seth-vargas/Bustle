@@ -320,7 +320,9 @@ def create_checkout_session():
         line_items=g.user.get_line_items(),
         mode='payment',
         success_url='http://localhost:5000/success',
-        cancel_url='http://localhost:5000/products',
+        # This is causing an issue when deployed. The url goes back to 
+        # localhost, but I want it to go to "/" for the host's website
+        cancel_url='https://bustle.onrender.com/products',
     )
 
     return redirect(session.url, code=303)
